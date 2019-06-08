@@ -10,7 +10,8 @@ The LCD 20x4 display to show the
 * IAQ Index Accuracy (Unreliable, Low, Medium, High)
 * Air Quality (good to very bad)
 * Temperature (C). Humidity (%), Air Pressure (mb), Illuminance (lx)
-The RGB LED indicates the Air Quality good (green), average (yellow), (little) bad (red), worse & very bad (red)</li>
+The RGB LED indicates the Air Quality good (green), average (yellow), (little) bad (red), worse & very bad (red)
+
 ![domoticz-tinkerforge-airqualitymonitor-p2](https://user-images.githubusercontent.com/47274144/59150720-73584380-8a28-11e9-9972-571c250251fd.png)
 
 Domoticz Plugin **"Air Quality Monitor"** polls in regular interval data from the "Air Quality Station".
@@ -18,6 +19,7 @@ This plugin has following devices (Type,SubType):
 * IAQ Index (Air Quality,Voltcraft CO-20), IAQ Index Accuracy (General,Alert), Air Quality (General, Alert, [good, average, (little) bad, worse,bad]
 * Temperature (Temp,LaCrosse TX3), Humidity (Humidity,LaCrosse TX3), Air Pressure (General,Barometer), Ambient Light (Lux,Lux)
 * LCD Backlight (Light/Switch,Switch), Status (General,Text)
+
 ![domoticz-tinkerforge-airqualitymonitor-d](https://user-images.githubusercontent.com/47274144/59150738-be725680-8a28-11e9-9859-f1ed2ac6b1d5.png)
 
 ## Hardware
