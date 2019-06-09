@@ -4,34 +4,33 @@
 # @version See plugin xml definition
 #
 # NOTE: after every change run
-# sudo chmod +x *.*                      
-# sudo systemctl restart domoticz.servicepi
-#
+# sudo service domoticz.sh restart
 # Domoticz Python Plugin Development Documentation:
 # https://www.domoticz.com/wiki/Developing_a_Python_plugin
-# https://www.tinkerforge.com/de/doc/Hardware/Bricklets/Air_Quality.html#air-quality-bricklet
 
 
 """
-<plugin key="AirQualityMonitor" name="Air Quality Monitor" author="rwbL" version="1.0.0 (Build 20190608)">
+<plugin key="IndoorAirQualityMonitor" name="Indoor Air Quality Monitor" author="rwbL" version="1.1.0 (Build 20190609)">
     <description>
-        <h2>Air Quality Monitor v1.0.0</h2><br/>
-        Measure the IAQ (Indoor Air Quality) Index & Accuracy, Air Pressure (mbar), Humidity (%RH), Temperature (°C), Illuminance (Lux).<br/>
-        <h3>Air Quality Station</h3>
+        <h2>Indoor Air Quality Monitor v1.1.0</h2><br/>
+        Measure the Indoor Air Quality (IAQ) Index (ppm), Condition and Accuracy, Air Pressure (mbar), Humidity (%), Temperature (C), Illuminance (lx).<br/>
+		There are 6 IAQ Levels with range=condition (color):<br/>
+		0-50=Good (green), 51-100=Moderate (yellow), 101-150=Unhealthy sensitive groups (orange), 151-200=Unhealthy (red), 201-300=Very Unhealthy (purple), 301-500=Hazardous (maroon).<br/>
+		The IAQ Index Accuracy has 4 levels Unreliable, Low, Medium, High.
+        <h3>Indoor Air Quality Station</h3>
         <ul style="list-style-type:square">
-            <li>The Air Quality Station uses Tinkerforge Build Blocks Master Brick & WiFi Extension and Bricklets Air Quality, LCD 20x4 display, RGB LED, Ambient Light.</li>
-            <li>LCD 20x4 display to show:</li>
+            <li>The Indoor Air Quality Station uses Tinkerforge Build Blocks Master Brick & WiFi Extension and Bricklets Air Quality, LCD 20x4 display, RGB LED, Ambient Light.</li>
+            <li>LCD 20x4 display:</li>
             <ul>
-                <li>IAQ Index (0-50=good, 51-100=average, 101-150=little bad, 151-200=bad, 201-300=worse, 301-500=very bad)</li>
-                <li>IAQ Index Accuracy (Unreliable, Low, Medium, High)</li>
-                <li>Air Quality (good to very bad)</li>
-                <li>Temperature (C). Humidity (%), Air Pressure (mb), Illuminance (lx)</li>
+                <li>Index ppm </li>
+                <li>Air Quality Condition</li>
+                <li>Temperature C, Humidity %, Air Pressure mbar, Illuminance lx</li>
             </ul>
-            <li>RGB LED to indicate the Air Quality good (green), average (yellow), (little) bad (red), worse & very bad (red).</li>
+            <li>RGB LED to indicate the Indoor Air Quality Level Color</li>
         </ul>
-        <h3>Air Quality Devices (Type,SubType)</h3>
+        <h3>Indoor Air Quality Devices (Type,SubType)</h3>
         <ul style="list-style-type:square">
-            <li>IAQ Index (Air Quality,Voltcraft CO-20), IAQ Index Accuracy (General,Alert), Air Quality (General, Alert, [good, average, (little) bad, worse,bad]</li>
+            <li>Index (General,Custom Sensor), Index Accuracy (General,Alert), Air Quality (General, Alert [Text=Level]</li>
             <li>Temperature (Temp,LaCrosse TX3),Humidity (Humidity,LaCrosse TX3),Air Pressure (General,Barometer),Ambient Light (Lux,Lux)</li>
             <li>LCD Backlight (Light/Switch,Switch), Status (General,Text)</li>
         </ul>
@@ -39,15 +38,15 @@
         <ul style="list-style-type:square">
             <li>HTTP address and Port (default 4223) of the Master Brick WiFi Extension</li>
             <li>Tinkerforge UIDs as comma separated string (use Brick Viewer to determine): Master Brick; Bricklets: Air Quality, LCD 20x4, RGB LED, Ambient Light</li>
-            <li>LED Brightness between 0 (OFF) and 255 (max)</li>
+            <li>LED Brightness between 0 (off) and 100 (max)</li>
         </ul>
     </description>
     <params>
-        <param field="Address" label="Host" width="200px" required="true" default="IP-ADDRESS"/>
+        <param field="Address" label="Host" width="200px" required="true" default="192.168.1.114"/>
         <param field="Port" label="Port" width="75px" required="true" default="4223"/>
-        <param field="Mode1" label="UIDs" width="200px" required="true" default="6yLduG,Jvj,BHN,Jng,yyc"/>
+        <param field="Mode1" label="UID (5)" width="200px" required="true" default="6yLduG,Jvj,BHN,Jng,yyc"/>
         <param field="Mode2" label="LED Brightness" width="75px" required="true" default="60"/>
-        <param field="Mode5" label="Check Interval (seconds)" width="75px" required="true" default="60"/>
+        <param field="Mode5" label="Check Interval (sec)" width="75px" required="true" default="60"/>
         <param field="Mode6" label="Debug" width="75px">
             <options>
                 <option label="True" value="Debug" default="true"/>
@@ -59,7 +58,7 @@
 """ 
 
 # Set the plugin version which is displayon the LCD
-PLUGINVERSION = "v1.0.0"
+PLUGINVERSION = "v1.1.0"
 
 ## Imports
 import Domoticz
@@ -83,17 +82,17 @@ from tinkerforge.bricklet_lcd_20x4 import BrickletLCD20x4
 from tinkerforge.bricklet_rgb_led_v2 import BrickletRGBLEDV2
 from tinkerforge.bricklet_ambient_light_v2 import BrickletAmbientLightV2
 
-# Set RGB LED brightness level 0(dark) - 255(brightest)
+# Set RGB LED brightness level 0% (off) - 100% (brightest)
+RGBBRIGHTNESS = 20
 RGBBRIGHTNESSMIN = 0
-RGBBRIGHTNESSMAX = 255
+RGBBRIGHTNESSMAX = 100
 
-# TF Air Quality range, i.e. 0-50,51-100,...
-AIRQUALITYGOOD = 50
-AIRQUALITYAVERAGE = 100
-AIRQUALITYLITTLEBAD = 150
-AIRQUALITYBAD = 200
-AIRQUALITYWORSE = 300
-AIRQUALITYVERYBAD = 500
+# Indoor Air Quality 1+6 Levels & Conditions & colors - see xml definition text
+# The first (1) = 0 which is just a place holder to accomodate level array index 1 to 6
+AIRQUALITYLEVELLIMIT = [0,50,100,150,200,300,500]
+AIRQUALITYLEVELCONDITION = ["Unknown","Good","Moderate","Unhealthy Sensitive Groups","Unhealthy","Very Unhealthy","Hazardous"]
+AIRQUALITYLEVELCOLOR = [[0,0,255],[0,255,0],[255,255,0],[255,165,0],[255,0,0],[128,0,128],[128,0,0]]
+AIRQUALITYACCURACY = ["Unknown","High","Medium","Low","Unreliable"]
 
 # Units of the device objects created by domoticz
 # Syntax:UNIT<DomoticzTypeName><Function> - without blanks or underscores, function is optional
@@ -144,10 +143,13 @@ class BasePlugin:
         # if there no  devices, create these
         if (len(Devices) == 0):
             Domoticz.Debug("Creating new devices ...")
-            Domoticz.Device(Name="IAQ Index", Unit=UNITAIRQUALITYIAQINDEX, TypeName="Air Quality", Used=1).Create()
+
+            # Index is a Custom Sensor as the Domoticz Air Quality Device is a Voltcraft which has different measures
+            Options = {'Custom': '1;ppm'}
+            Domoticz.Device(Name="Index", Unit=UNITAIRQUALITYIAQINDEX, TypeName="Custom", Subtype=31, Options=Options, Used=1).Create()
             Domoticz.Debug("Device created: "+Devices[UNITAIRQUALITYIAQINDEX].Name)
 
-            Domoticz.Device(Name="IAQ Index Accuracy", Unit=UNITALERTIAQINDEXACCURACY, TypeName="Alert", Used=1).Create()
+            Domoticz.Device(Name="Index Accuracy", Unit=UNITALERTIAQINDEXACCURACY, TypeName="Alert", Used=1).Create()
             Domoticz.Debug("Device created: "+Devices[UNITALERTIAQINDEXACCURACY].Name)
             
             Domoticz.Device(Name="Air Quality", Unit=UNITALERTAIRQUALITY, TypeName="Alert", Used=1).Create()
@@ -165,7 +167,7 @@ class BasePlugin:
             Domoticz.Device(Name="Ambient Light", Unit=UNITILLUMINATION, TypeName="Illumination", Used=1).Create()
             Domoticz.Debug("Device created: "+Devices[UNITILLUMINATION].Name)
             
-            Domoticz.Device(Name="Backlight", Unit=UNITSWITCHBACKLIGHT, TypeName="Switch", Used=1).Create()
+            Domoticz.Device(Name="LCD Backlight", Unit=UNITSWITCHBACKLIGHT, TypeName="Switch", Used=1).Create()
             Domoticz.Debug("Device created: "+Devices[UNITSWITCHBACKLIGHT].Name)
             
             # Control devices
@@ -187,9 +189,10 @@ class BasePlugin:
         # Master - Turn status led off
         SetMasterStatusLed(self, 0)
 
-        # LCD - Turn backlight ON.Ensure to update the domoticz switch device.
+        # LCD - Turn backlight ON (Ensure to update the domoticz switch device),  set initial text.
         SetLCDBacklight(self, 'On')
         Devices[UNITSWITCHBACKLIGHT].Update( nValue=1, sValue=str(0))
+        SetLCDText(self, "Indoor Air Quality", "Station " + PLUGINVERSION, "", "2019 by rwbl")
 
         # RGB LED - Turn status led off
         SetRGBLEDStatusLed(self, 0)
@@ -287,60 +290,51 @@ class BasePlugin:
                 # Update the devices
 
                 # IAQ (Indoor Air Quality) Index
-                ## Update the value - only nValue is used, but mandatory to add an sValue
-                Devices[UNITAIRQUALITYIAQINDEX].Update( nValue=iaq_index, sValue="0")
+                ## nValue=0
+				## sValue=string value
+                Devices[UNITAIRQUALITYIAQINDEX].Update( nValue=0,sValue=str(iaq_index) )
+                # Devices[UNITAIRQUALITYIAQINDEX].Update( nValue=iaq_index, sValue="0")
                 Domoticz.Debug(Devices[UNITAIRQUALITYIAQINDEX].Name + "-IAQ Index:" + str(iaq_index) )
  
                 # IAQ Index Accuracy
                 ## nvalue=LEVEL - (0=gray, 1=green, 2=yellow, 3=orange, 4=red)
                 ## svalue=TEXT
                 iaqaccuracylevel = 0
-                iaqaccuracytext = "UNKNOWN"
                 if iaq_index_accuracy == aq.ACCURACY_UNRELIABLE:
                     iaqaccuracylevel = 4
-                    iaqaccuracytext = "Unreliable"
                 elif iaq_index_accuracy == aq.ACCURACY_LOW:
                     iaqaccuracylevel = 3
-                    iaqaccuracytext = "Low"
                 elif iaq_index_accuracy == aq.ACCURACY_MEDIUM:
                     iaqaccuracylevel = 2
-                    iaqaccuracytext = "Medium"
                 elif iaq_index_accuracy == aq.ACCURACY_HIGH:
                     iaqaccuracylevel = 1
-                    iaqaccuracytext = "High"
-                    
+                iaqaccuracytext = AIRQUALITYACCURACY[iaqaccuracylevel]
                 Devices[UNITALERTIAQINDEXACCURACY].Update( nValue=iaqaccuracylevel, sValue=iaqaccuracytext)
                 Domoticz.Debug(Devices[UNITALERTIAQINDEXACCURACY].Name + "-IAQ IndexAccuracy:" + str(iaqaccuracylevel) + "," + iaqaccuracytext )
 
                 # Air Quality
-                ## nvalue=LEVEL - (0=gray, 1=green, 2=yellow, 3=orange, 4=red)
+                ## nvalue=LEVEL - see xml definition
                 ## svalue=TEXT
                 airqualitylevel = 0
-                airqualitytext = "UNKNOWN"
-                if iaq_index >= 0 and iaq_index <= AIRQUALITYGOOD:
+                if iaq_index >= 0 and iaq_index <= AIRQUALITYLEVELLIMIT[1]:
                     airqualitylevel = 1
-                    airqualitytext = "GOOD"
                     
-                if iaq_index > AIRQUALITYGOOD and iaq_index <= AIRQUALITYAVERAGE:
+                if iaq_index > AIRQUALITYLEVELLIMIT[1] and iaq_index <= AIRQUALITYLEVELLIMIT[2]:
                     airqualitylevel = 2
-                    airqualitytext = "AVERAGE"
                     
-                if iaq_index > AIRQUALITYAVERAGE and iaq_index <= AIRQUALITYLITTLEBAD:
-                    airqualitylevel = 2
-                    airqualitytext = "LITTLE BAD"
-
-                if iaq_index > AIRQUALITYLITTLEBAD and iaq_index <= AIRQUALITYBAD:
+                if iaq_index > AIRQUALITYLEVELLIMIT[2] and iaq_index <= AIRQUALITYLEVELLIMIT[3]:
                     airqualitylevel = 3
-                    airqualitytext = "BAD"
 
-                if iaq_index > AIRQUALITYBAD and iaq_index <= AIRQUALITYWORSE:
+                if iaq_index > AIRQUALITYLEVELLIMIT[3] and iaq_index <= AIRQUALITYLEVELLIMIT[4]:
                     airqualitylevel = 4
-                    airqualitytext = "WORSE"
+
+                if iaq_index > AIRQUALITYLEVELLIMIT[4] and iaq_index <= AIRQUALITYLEVELLIMIT[5]:
+                    airqualitylevel = 5
                 
-                if iaq_index > AIRQUALITYWORSE:
-                    airqualitylevel = 4
-                    airqualitytext = "VERY BAD"
+                if iaq_index > AIRQUALITYLEVELLIMIT[5]:
+                    airqualitylevel = 6
 
+                airqualitytext = AIRQUALITYLEVELCONDITION[airqualitylevel]
                 Devices[UNITALERTAIRQUALITY].Update( nValue=airqualitylevel, sValue=airqualitytext)
                 Domoticz.Debug("Air Quality:" + str(airqualitylevel) + "," + airqualitytext  )
 
@@ -407,7 +401,9 @@ class BasePlugin:
 
                 ## TT:HH - TT=Temperature,HH=Humidity
                 lcdtemperature = str(temperature)
-                lcdhumidity = str(humidity)
+                lcdhumidity = "HH"
+                if humidity < 100:
+                    lcdhumidity = str(humidity)
 
                 ## airpressure
                 lcdairpressure = str(air_pressure)
@@ -416,33 +412,24 @@ class BasePlugin:
                 lcdilluminance = str(illuminance)
                 
                 ## write to the lcd: line (int,0-3),pos(int,0-19),text
-                lcd.write_line(0, 0, "IAQ: " + lcdaqi + " " + airqualitytext)
+                lcd.write_line(0, 0, "Q: " + lcdaqi + " ppm " + airqualitytext)
                 lcd.write_line(1, 0, "T: " + lcdtemperature + " C")
-                lcd.write_line(1, 10, "H: " + lcdhumidity + " %")
-                lcd.write_line(2, 0, "P: " + lcdairpressure + " mb")
+                lcd.write_line(1, 14, "H: " + lcdhumidity + "%")
+                lcd.write_line(2, 0, "P: " + lcdairpressure + " mbar")
                 lcd.write_line(3, 0, "L: " + lcdilluminance + " lx")
                 lcd.write_line(3, 14, PLUGINVERSION)
                 Domoticz.Debug("LCD Lines written")
 
-                ## rgb led set color depending air quality: unknown, good, average, bad, poor
+                ## rgb led set color depending indoor air quality index
                 ## Set the brightness using the value of the parameter Mode2
-                ## Level 4 always uses full brightness 255
                 lbbrightness = int(Parameters["Mode2"])
-                # magenta
-                if airqualitylevel == 0:
-                    rl.set_rgb_value(lbbrightness, 0, lbbrightness)
-                # green
-                elif airqualitylevel == 1:
-                    rl.set_rgb_value(0, lbbrightness, 0)
-                # yellow
-                elif airqualitylevel == 2:
-                    rl.set_rgb_value(lbbrightness, lbbrightness, 0)
-                # red (full)
-                elif airqualitylevel == 3:
-                    rl.set_rgb_value(255, 0, 0)
-                # magenta (full)
-                elif airqualitylevel == 4:
-                    rl.set_rgb_value(255, 0, 255)
+                if lbbrightness < RGBBRIGHTNESSMIN:
+                    lbbrightness = RGBBRIGHTNESSMIN
+                if lbbrightness > RGBBRIGHTNESSMAX:
+                    lbbrightness = RGBBRIGHTNESSMAX
+
+                rl.set_rgb_value(SetRGBColor(AIRQUALITYLEVELCOLOR[airqualitylevel][0],lbbrightness), SetRGBColor(AIRQUALITYLEVELCOLOR[airqualitylevel][1],lbbrightness), SetRGBColor(AIRQUALITYLEVELCOLOR[airqualitylevel][2],lbbrightness))
+                Domoticz.Debug("RGB LED Color set")
 
                 # Log Message
                 Devices[UNITTEXTSTATUS].Update( nValue=0, sValue="OK: " + lcdaqi + ","+ lcdtemperature + "," + lcdhumidity + "," + lcdairpressure)
@@ -582,6 +569,13 @@ def SetRGBLEDStatusLed(self, state):
         Domoticz.Log("[ERROR] Can not set RGB LED Status LED.")
         return 0
 
+# Set the rgb color adjusted
+def SetRGBColor(color, brightness):
+    newcolor = 0
+    if (brightness > 0) and (color > 0):
+        newcolor = int(color * brightness  / 100)
+    return newcolor
+
 # Air Quality - Set the status led
 # state = 0 (OFF) | 1 (ON) | 2 (show heartbeat) | 3 (show status)
 def SetAirQualityStatusLed(self, state):
@@ -668,6 +662,34 @@ def SetLCDBacklight(self, state):
         if state == 'On':
             lcd.backlight_on()
             Domoticz.Log("LCD Backlight ON.")
+
+        ipcon.disconnect()
+        
+        return 1
+
+    except:
+        # Error
+        Domoticz.Log("[ERROR] Can not set Master Status LED.")
+        return 0
+        
+# Set the LCD text by writing up to 4 lines starting at pos 0
+# line1,line2,line3,line4
+def SetLCDText(self, line1, line2, line3, line4):
+    Domoticz.Debug("SetLCDText - UID:" + self.UIDList[UIDINDEXLCD])
+    try:
+        # Create IP connection
+        ipcon = IPConnection() 
+        # Create device object
+        lcd = BrickletLCD20x4(self.UIDList[UIDINDEXLCD], ipcon)
+        # Connect to brickd
+        ipcon.connect(Parameters["Address"], int(Parameters["Port"]))
+        # Don't use device before ipcon is connected
+        ## write to the lcd: line (int,0-3),pos(int,0-19),text
+        lcd.clear_display()
+        lcd.write_line(0, 0, line1)
+        lcd.write_line(1, 0, line2)
+        lcd.write_line(2, 0, line3)
+        lcd.write_line(3, 0, line4)
 
         ipcon.disconnect()
         

@@ -1,14 +1,7 @@
-### Status 20190608
+### Status 20190609
 
 #### UPD: Documentation Concept
 Write up more details about the concept and the learnings. Use for the workbook  Domoticz Home Automation.
-_Status_
-Not started.
-
-#### UPD: Domoticz Device AQM Index align with AQM Air Quality
-Example: According Tinkerforge documentation is the Air Quality Average for an AQM Index of 84 ppm.
-The Domoticz Device AQM states Excellent - would have expected Average. 
-Need to check out the Domoticz documentation or source code for the rules / definition.
 _Status_
 Not started.
 
@@ -39,7 +32,7 @@ Not started.
 Instead of ip connect & disconnet for every heartbeat, use the function onStart to connect and onStop to disconnect.
 This functionality is required for the push buttons callback.
 
-#### NEW: Replace RGB LED by IO-$ with LED R-G-B.
+#### NEW: Replace RGB LED by IO-4 with LED R-G-B.
 Just an idea. Will probably drop.
 _Status_
 Not started.

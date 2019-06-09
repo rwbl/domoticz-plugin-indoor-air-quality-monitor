@@ -1,26 +1,30 @@
+#Indoor Air Quality Monitor v1.1.0
+
 # Objectives
-* To measure the IAQ (Indoor Air Quality) Index & Accuracy, Air Pressure (mbar), Humidity (%RH), Temperature (°C), Illuminance (Lux).
-* To display values in an Air Quality Station and in Domoticz.
-* To notify if the Air Quality is below threshold.
+* To measure the Indoor Air Quality (IAQ) Index (ppm), Condition and Accuracy, Air Pressure (mbar), Humidity (%), Temperature (C), Illuminance (lx).
+* To display values in an Indoor Air Quality Station and in Domoticz.
+* To notify if the Indoor Air Quality is below threshold.
 
 ## Solution
-An **"Air Quality Station"** using [Tinkerforge](https://www.tinkerforge.com/en) Building Blocks Master Brick & WiFi Extension and Bricklets Air Quality, LCD 20x4 display, RGB LED, Ambient Light.
-The LCD 20x4 display to show the
-* IAQ Index (0-50=good, 51-100=average, 101-150=little bad, 151-200=bad, 201-300=worse, 301-500=very bad)
-* IAQ Index Accuracy (Unreliable, Low, Medium, High)
-* Air Quality (good to very bad)
-* Temperature (C). Humidity (%), Air Pressure (mb), Illuminance (lx)
-The RGB LED indicates the Air Quality good (green), average (yellow), (little) bad (red), worse & very bad (red)
+An **Indoor Air Quality Station** is build out of the [Tinkerforge](https://www.tinkerforge.com/en) Building Blocks:
+Master Brick & WiFi Extension and Bricklets Air Quality, LCD 20x4 display, RGB LED, Ambient Light.
 
-![domoticz-tinkerforge-airqualitymonitor-p2](https://user-images.githubusercontent.com/47274144/59150720-73584380-8a28-11e9-9972-571c250251fd.png)
+The **Air Quality Bricklet** measures the IAQ Index (ppm), IAQ Condition, IAQ Accuracy, Air Pressure (mbar), Humidity (%), Temperature (C).
+There are 6 IAQ Condition Levels with range=condition (color):
+0-50=Good (green), 51-100=Moderate (yellow), 101-150=Unhealthy sensitive groups (orange), 151-200=Unhealthy (red), 201-300=Very Unhealthy (purple), 301-500=Hazardous (maroon).<br/>
+The IAQ Index Accuracy has 4 levels Unreliable, Low, Medium, High.
 
-Domoticz Plugin **"Air Quality Monitor"** polls in regular interval data from the "Air Quality Station".
-This plugin has following devices (Type,SubType):
-* IAQ Index (Air Quality,Voltcraft CO-20), IAQ Index Accuracy (General,Alert), Air Quality (General, Alert, [good, average, (little) bad, worse,bad]
-* Temperature (Temp,LaCrosse TX3), Humidity (Humidity,LaCrosse TX3), Air Pressure (General,Barometer), Ambient Light (Lux,Lux)
+The **Ambient Light Bricklet** measures the Illuminance (lx).
+
+The **LCD 20x4 Bricklet** displays the IAQ Index ppm, IAQ Condition, Temperature C, Humidity %, Air Pressure mbar, Illuminance lx.
+
+The **RBG LED Bricklet** indicates the Indoor Air Quality Level Color
+
+The Domoticz Plugin **Indoor Air Quality Monitor** polls in regular intervals data from the **Indoor Air Quality Station**.
+The **Domoticz Indoor Air Quality Devices** Name (Type,SubType):
+* Index (General,Custom Sensor), Index Accuracy (General,Alert), Air Quality (General, Alert [Text=Level]
+* Temperature (Temp,LaCrosse TX3),Humidity (Humidity,LaCrosse TX3),Air Pressure (General,Barometer),Ambient Light (Lux,Lux)
 * LCD Backlight (Light/Switch,Switch), Status (General,Text)
-
-![domoticz-tinkerforge-airqualitymonitor-d](https://user-images.githubusercontent.com/47274144/59150738-be725680-8a28-11e9-9859-f1ed2ac6b1d5.png)
 
 ## Hardware
 * Raspberry Pi 3B+ (Domoticz Server)
@@ -160,10 +164,10 @@ Lookup for details in the source code **plugin.py** (well documented).
 * NEXT TIME(S):
 	*_onCommand_ to handle state changes
 		* LCD Backlight on or off
-	*_onHearbeat_ to update LCD display and Domoticz devices
+	*_onHearbeat_ to update LCD 20x4 display, RGB LED and Domoticz devices
 
 The devices are manually added to the Domoticz Dashboard.
-In addition a room "Air Quality Monitor" is defined with all the AQM devices and a simple floorplan.
+In addition a roomplan "Indoor Air Quality Monitor" is defined with all the AQM devices and a simple floorplan.
 
 ## Restart Domoticz
 Restart Domoticz to find the plugin:
@@ -187,132 +191,105 @@ The initial check interval is set at 60 seconds. This is a good value for testin
 After adding,ensure to check the Domoticz Log (Domoticz Web UI, select tab Setup > Log)
 Example:
 ```
-2019-06-08 19:14:25.934 Status: (AQM) Started. 
-2019-06-08 19:14:26.551 (AQM) Air Quality Monitor starting 
-2019-06-08 19:14:26.551 (AQM) Debug logging mask set to: PYTHON PLUGIN QUEUE IMAGE DEVICE CONNECTION MESSAGE ALL 
-2019-06-08 19:14:26.551 (AQM) 'Address':'192.168.1.114' 
-2019-06-08 19:14:26.551 (AQM) 'HardwareID':'8' 
-2019-06-08 19:14:26.551 (AQM) 'Mode6':'Debug' 
-2019-06-08 19:14:26.551 (AQM) 'Version':'1.0.0 (Build 20190608)' 
-2019-06-08 19:14:26.551 (AQM) 'Database':'/home/pi/domoticz/domoticz.db' 
-2019-06-08 19:14:26.551 (AQM) 'DomoticzHash':'b06fb6b60' 
-2019-06-08 19:14:26.551 (AQM) 'DomoticzVersion':'4.10881' 
-2019-06-08 19:14:26.551 (AQM) 'Mode2':'40' 
-2019-06-08 19:14:26.551 (AQM) 'Mode5':'60' 
-2019-06-08 19:14:26.551 (AQM) 'StartupFolder':'/home/pi/domoticz/' 
-2019-06-08 19:14:26.551 (AQM) 'HomeFolder':'/home/pi/domoticz/plugins/airqualitymonitor/' 
-2019-06-08 19:14:26.552 (AQM) 'Language':'en' 
-2019-06-08 19:14:26.552 (AQM) 'Mode1':'6yLduG,Jvj,BHN,Jng,yyc' 
-2019-06-08 19:14:26.552 (AQM) 'Author':'rwbL' 
-2019-06-08 19:14:26.552 (AQM) 'Port':'4223' 
-2019-06-08 19:14:26.552 (AQM) 'Name':'AQM' 
-2019-06-08 19:14:26.552 (AQM) 'UserDataFolder':'/home/pi/domoticz/' 
-2019-06-08 19:14:26.552 (AQM) 'Key':'AirQualityMonitor' 
-2019-06-08 19:14:26.552 (AQM) 'DomoticzBuildTime':'2019-06-08 15:28:08' 
-2019-06-08 19:14:26.552 (AQM) Device count: 0 
-2019-06-08 19:14:26.552 (AQM) Creating new devices ... 
-2019-06-08 19:14:26.552 (AQM) Creating device 'IAQ Index'. 
-2019-06-08 19:14:26.553 (AQM) Device created: AQM - IAQ Index 
-2019-06-08 19:14:26.553 (AQM) Creating device 'IAQ Index Accuracy'. 
-2019-06-08 19:14:26.554 (AQM) Device created: AQM - IAQ Index Accuracy 
-2019-06-08 19:14:26.554 (AQM) Creating device 'Air Quality'. 
-2019-06-08 19:14:26.555 (AQM) Device created: AQM - Air Quality 
-2019-06-08 19:14:26.556 (AQM) Creating device 'Temperature'. 
-2019-06-08 19:14:26.556 (AQM) Device created: AQM - Temperature 
-2019-06-08 19:14:26.557 (AQM) Creating device 'Humidity'. 
-2019-06-08 19:14:26.557 (AQM) Device created: AQM - Humidity 
-2019-06-08 19:14:26.558 (AQM) Creating device 'Air Pressure'. 
-2019-06-08 19:14:26.558 (AQM) Device created: AQM - Air Pressure 
-2019-06-08 19:14:26.559 (AQM) Creating device 'Ambient Light'. 
-2019-06-08 19:14:26.560 (AQM) Device created: AQM - Ambient Light 
-2019-06-08 19:14:26.560 (AQM) Creating device 'Backlight'. 
-2019-06-08 19:14:26.561 (AQM) Device created: AQM - Backlight 
-2019-06-08 19:14:26.561 (AQM) Creating device 'Status'. 
-2019-06-08 19:14:26.562 (AQM) Device created: AQM - Status 
-2019-06-08 19:14:26.562 (AQM) Creating new devices: OK 
-2019-06-08 19:14:26.562 (AQM) UIDs:6yLduG,Jvj,BHN,Jng,yyc 
-2019-06-08 19:14:26.562 (AQM) SetMasterStatusLed - UID:6yLduG 
-2019-06-08 19:14:26.571 (AQM) Master Status LED disabled. 
-2019-06-08 19:14:26.672 (AQM) SetLCDBacklight - UID:BHN 
-2019-06-08 19:14:26.681 (AQM) LCD Backlight ON. 
-2019-06-08 19:14:26.782 (AQM - Backlight) Updating device from 0:'' to have values 1:'0'. 
-2019-06-08 19:14:26.788 (AQM) SetRGBLEDStatusLed - UID:Jng 
-2019-06-08 19:14:26.799 (AQM) RGB LED Status LED disabled. 
-2019-06-08 19:14:26.901 (AQM) ConfigAirQuality - UID:Jvj 
-2019-06-08 19:14:26.912 (AQM) Air Quality Status LED disabled. 
-2019-06-08 19:14:26.548 Status: (AQM) Entering work loop. 
-2019-06-08 19:14:26.549 Status: (AQM) Initialized version 1.0.0 (Build 20190608), author 'rwbL' 
-2019-06-08 19:14:26.856 Status: dzVents: Error (2.4.23): Discarding device. No last update info found: {["data"]={["levelVal"]=0, ["hardwareID"]=16, ["hardwareType"]="Air Quality Monitor", ["hardwareName"]="AQM", ["maxDimLevel"]=100, ["hardwareTypeValue"]=94, ["_state"]="On", ["protected"]=false, ["_nValue"]=1, ["usedByCamera"]=false, ["unit"]=8, ["icon"]="lightbulb"}, ["changed"]=true, ["id"]=44, ["rawData"]={"0"}, ["switchTypeValue"]=0, ["switchType"]="On/Off", ["lastLevel"]=255, ["batteryLevel"]=0, ["deviceType"]="Light/Switch", ["signalLevel"]=0, ["baseType"]="device", ["description"]="", ["name"]="AQM - Backlight", ["deviceID"]="", ["timedOut"]=false, ["subType"]="Switch", ["lastUpdate"]=""} 
-2019-06-08 19:14:27.014 (AQM) Heartbeat set: 60 
-2019-06-08 19:14:27.014 (AQM) Pushing 'PollIntervalDirective' on to queue 
-2019-06-08 19:14:27.014 (AQM) Processing 'PollIntervalDirective' message 
-2019-06-08 19:14:27.014 (AQM) Heartbeat interval set to: 60. 
-2019-06-08 19:14:36.550 (AQM) Pushing 'onHeartbeatCallback' on to queue 
-2019-06-08 19:14:36.581 (AQM) Processing 'onHeartbeatCallback' message 
-2019-06-08 19:14:36.581 (AQM) Calling message handler 'onHeartbeat'. 
-2019-06-08 19:14:36.581 (AQM) onHeartbeat called. Counter=60 (Heartbeat=60) 
-2019-06-08 19:14:36.582 (AQM) IP Connected created 
-2019-06-08 19:14:36.584 (AQM) Devices created - OK 
-2019-06-08 19:14:36.596 (AQM) IP Connection - OK 
-2019-06-08 19:14:36.602 (AQM - IAQ Index) Updating device from 0:'' to have values 125:'0'. 
-2019-06-08 19:14:36.612 (AQM) AQM - IAQ Index-IAQ Index:125 
-2019-06-08 19:14:36.612 (AQM - IAQ Index Accuracy) Updating device from 0:'No Alert!' to have values 4:'Unreliable'. 
-2019-06-08 19:14:36.622 (AQM) AQM - IAQ Index Accuracy-IAQ IndexAccuracy:4,Unreliable 
-2019-06-08 19:14:36.622 (AQM - Air Quality) Updating device from 0:'No Alert!' to have values 2:'LITTLE BAD'. 
-2019-06-08 19:14:36.632 (AQM) Air Quality:2,LITTLE BAD 
-2019-06-08 19:14:36.632 (AQM - Temperature) Updating device from 0:'' to have values 0:'21'. 
-2019-06-08 19:14:36.640 (AQM) AQM - Temperature-Temperature:21 
-2019-06-08 19:14:36.640 (AQM - Humidity) Updating device from 0:'' to have values 54:'1'. 
-2019-06-08 19:14:36.649 (AQM) AQM - Humidity-Humidity:54 
-2019-06-08 19:14:36.649 (AQM - Air Pressure) Updating device from 0:'1021.34;0' to have values 0:'1017;0'. 
-2019-06-08 19:14:36.658 (AQM) AQM - Air Pressure-Air Pressure:1017 
-2019-06-08 19:14:36.658 (AQM) Air Quality Devices updated 
-2019-06-08 19:14:36.666 (AQM - Ambient Light) Updating device from 0:'' to have values 0:'150'. 
-2019-06-08 19:14:36.675 (AQM) AQM - Ambient Light-Lux:150 
-2019-06-08 19:14:36.675 (AQM) Tinkerforge updating... 
-2019-06-08 19:14:36.675 (AQM) LCD Display cleared 
-2019-06-08 19:14:36.679 (AQM) LCD Lines written 
-2019-06-08 19:14:36.680 (AQM - Status) Updating device from 0:'' to have values 0:'OK: 125,21,54,1017'. 
-2019-06-08 19:14:36.702 (AQM) OK: 125,21,54,1017 
-2019-06-08 19:14:36.805 (AQM) Update - OK. 
+2019-06-09 10:08:23.075 Status: PluginSystem: Started, Python version '3.5.3'. 
+2019-06-09 10:08:51.978 Status: (IAQM) Started. 
+2019-06-09 10:08:52.743 (IAQM) Air Quality Monitor starting 
+2019-06-09 10:08:52.743 (IAQM) Debug logging mask set to: PYTHON PLUGIN QUEUE IMAGE DEVICE CONNECTION MESSAGE ALL 
+2019-06-09 10:08:52.743 (IAQM) 'Name':'IAQM' 
+2019-06-09 10:08:52.743 (IAQM) 'Key':'IndoorAirQualityMonitor' 
+2019-06-09 10:08:52.743 (IAQM) 'Version':'1.1.0 (Build 20190609)' 
+2019-06-09 10:08:52.743 (IAQM) 'UserDataFolder':'/home/pi/domoticz/' 
+2019-06-09 10:08:52.743 (IAQM) 'StartupFolder':'/home/pi/domoticz/' 
+2019-06-09 10:08:52.743 (IAQM) 'Address':'192.168.1.114' 
+2019-06-09 10:08:52.743 (IAQM) 'Mode5':'60' 
+2019-06-09 10:08:52.743 (IAQM) 'Mode2':'60' 
+2019-06-09 10:08:52.743 (IAQM) 'Language':'en' 
+2019-06-09 10:08:52.743 (IAQM) 'Port':'4223' 
+2019-06-09 10:08:52.743 (IAQM) 'Mode1':'6yLduG,Jvj,BHN,Jng,yyc' 
+2019-06-09 10:08:52.743 (IAQM) 'DomoticzHash':'b06fb6b60' 
+2019-06-09 10:08:52.743 (IAQM) 'HardwareID':'7' 
+2019-06-09 10:08:52.743 (IAQM) 'Author':'rwbL' 
+2019-06-09 10:08:52.744 (IAQM) 'Database':'/home/pi/domoticz/domoticz.db' 
+2019-06-09 10:08:52.744 (IAQM) 'HomeFolder':'/home/pi/domoticz/plugins/indoorairqualitymonitor/' 
+2019-06-09 10:08:52.744 (IAQM) 'Mode6':'Debug' 
+2019-06-09 10:08:52.744 (IAQM) 'DomoticzBuildTime':'2019-06-08 15:28:08' 
+2019-06-09 10:08:52.744 (IAQM) 'DomoticzVersion':'4.10881' 
+2019-06-09 10:08:52.744 (IAQM) Device count: 0 
+2019-06-09 10:08:52.744 (IAQM) Creating new devices ... 
+2019-06-09 10:08:52.744 (IAQM) Creating device 'IAQ Index'. 
+2019-06-09 10:08:52.745 (IAQM) Device created: IAQM - IAQ Index 
+2019-06-09 10:08:52.745 (IAQM) Creating device 'IAQ Index Accuracy'. 
+2019-06-09 10:08:52.746 (IAQM) Device created: IAQM - IAQ Index Accuracy 
+2019-06-09 10:08:52.746 (IAQM) Creating device 'Air Quality'. 
+2019-06-09 10:08:52.747 (IAQM) Device created: IAQM - Air Quality 
+2019-06-09 10:08:52.747 (IAQM) Creating device 'Temperature'. 
+2019-06-09 10:08:52.748 (IAQM) Device created: IAQM - Temperature 
+2019-06-09 10:08:52.748 (IAQM) Creating device 'Humidity'. 
+2019-06-09 10:08:52.749 (IAQM) Device created: IAQM - Humidity 
+2019-06-09 10:08:52.749 (IAQM) Creating device 'Air Pressure'. 
+2019-06-09 10:08:52.750 (IAQM) Device created: IAQM - Air Pressure 
+2019-06-09 10:08:52.750 (IAQM) Creating device 'Ambient Light'. 
+2019-06-09 10:08:52.751 (IAQM) Device created: IAQM - Ambient Light 
+2019-06-09 10:08:52.751 (IAQM) Creating device 'LCD Backlight'. 
+2019-06-09 10:08:52.752 (IAQM) Device created: IAQM - LCD Backlight 
+2019-06-09 10:08:52.752 (IAQM) Creating device 'Status'. 
+2019-06-09 10:08:52.753 (IAQM) Device created: IAQM - Status 
+2019-06-09 10:08:52.753 (IAQM) Creating new devices: OK 
+2019-06-09 10:08:52.753 (IAQM) UIDs:6yLduG,Jvj,BHN,Jng,yyc 
+2019-06-09 10:08:52.753 (IAQM) SetMasterStatusLed - UID:6yLduG 
+2019-06-09 10:08:52.762 (IAQM) Master Status LED disabled. 
+2019-06-09 10:08:52.863 (IAQM) SetLCDBacklight - UID:BHN 
+2019-06-09 10:08:52.872 (IAQM) LCD Backlight ON. 
+2019-06-09 10:08:52.973 (IAQM - LCD Backlight) Updating device from 0:'' to have values 1:'0'. 
+2019-06-09 10:08:52.981 (IAQM) SetLCDText - UID:BHN 
+2019-06-09 10:08:52.740 Status: (IAQM) Entering work loop. 
+2019-06-09 10:08:52.741 Status: (IAQM) Initialized version 1.1.0 (Build 20190609), author 'rwbL' 
+2019-06-09 10:08:53.092 (IAQM) SetRGBLEDStatusLed - UID:Jng 
+2019-06-09 10:08:53.103 (IAQM) RGB LED Status LED disabled. 
+2019-06-09 10:08:53.204 (IAQM) ConfigAirQuality - UID:Jvj 
+2019-06-09 10:08:53.212 (IAQM) Air Quality Status LED disabled. 
+2019-06-09 10:08:53.313 (IAQM) Heartbeat set: 60 
+2019-06-09 10:08:53.313 (IAQM) Pushing 'PollIntervalDirective' on to queue 
+2019-06-09 10:08:53.313 (IAQM) Processing 'PollIntervalDirective' message 
+2019-06-09 10:08:53.313 (IAQM) Heartbeat interval set to: 60. 
 ```
 
-## Domoticz Log Entry AQM Poll with Debug=True
-The Air Quality Monitor runs every 60 seconds (Heartbeat interval) which is shown in the Domoticz log.
+## Domoticz Log Entry IAQM Poll with Debug=True
+The Indoor Air Quality Monitor runs every 60 seconds (Heartbeat interval) which is shown in the Domoticz log.
 ```
-2019-06-08 19:16:43.118 (AQM) Pushing 'onHeartbeatCallback' on to queue 
-2019-06-08 19:16:43.158 (AQM) Processing 'onHeartbeatCallback' message 
-2019-06-08 19:16:43.158 (AQM) Calling message handler 'onHeartbeat'. 
-2019-06-08 19:16:43.158 (AQM) onHeartbeat called. Counter=240 (Heartbeat=60) 
-2019-06-08 19:16:43.159 (AQM) IP Connected created 
-2019-06-08 19:16:43.162 (AQM) Devices created - OK 
-2019-06-08 19:16:43.175 (AQM) IP Connection - OK 
-2019-06-08 19:16:43.182 (AQM - IAQ Index) Updating device from 133:'0' to have values 121:'0'. 
-2019-06-08 19:16:43.189 (AQM) AQM - IAQ Index-IAQ Index:121 
-2019-06-08 19:16:43.189 (AQM - IAQ Index Accuracy) Updating device from 3:'Low' to have values 3:'Low'. 
-2019-06-08 19:16:43.198 (AQM) AQM - IAQ Index Accuracy-IAQ IndexAccuracy:3,Low 
-2019-06-08 19:16:43.198 (AQM - Air Quality) Updating device from 2:'LITTLE BAD' to have values 2:'LITTLE BAD'. 
-2019-06-08 19:16:43.206 (AQM) Air Quality:2,LITTLE BAD 
-2019-06-08 19:16:43.207 (AQM - Temperature) Updating device from 0:'21' to have values 0:'21'. 
-2019-06-08 19:16:43.214 (AQM) AQM - Temperature-Temperature:21 
-2019-06-08 19:16:43.214 (AQM - Humidity) Updating device from 54:'1' to have values 54:'1'. 
-2019-06-08 19:16:43.222 (AQM) AQM - Humidity-Humidity:54 
-2019-06-08 19:16:43.222 (AQM - Air Pressure) Updating device from 0:'1017;0' to have values 0:'1017;0'. 
-2019-06-08 19:16:43.229 (AQM) AQM - Air Pressure-Air Pressure:1017 
-2019-06-08 19:16:43.229 (AQM) Air Quality Devices updated 
-2019-06-08 19:16:43.239 (AQM - Ambient Light) Updating device from 0:'138' to have values 0:'130'. 
-2019-06-08 19:16:43.246 (AQM) AQM - Ambient Light-Lux:130 
-2019-06-08 19:16:43.246 (AQM) Tinkerforge updating... 
-2019-06-08 19:16:43.247 (AQM) LCD Display cleared 
-2019-06-08 19:16:43.250 (AQM) LCD Lines written 
-2019-06-08 19:16:43.251 (AQM - Status) Updating device from 0:'OK: 133,21,54,1017' to have values 0:'OK: 121,21,54,1017'. 
-2019-06-08 19:16:43.261 (AQM) OK: 121,21,54,1017 
-2019-06-08 19:16:43.364 (AQM) Update - OK. 
-```
+2019-06-09 19:12:25.236 (IAQM) Pushing 'onHeartbeatCallback' on to queue 
+2019-06-09 19:12:25.260 (IAQM) Processing 'onHeartbeatCallback' message 
+2019-06-09 19:12:25.262 (IAQM) Calling message handler 'onHeartbeat'. 
+2019-06-09 19:12:25.262 (IAQM) onHeartbeat called. Counter=7380 (Heartbeat=60) 
+2019-06-09 19:12:25.262 (IAQM) IP Connected created 
+2019-06-09 19:12:25.264 (IAQM) Devices created - OK 
+2019-06-09 19:12:25.275 (IAQM) IP Connection - OK 
+2019-06-09 19:12:25.283 (IAQM - Index) Updating device from 0:'66' to have values 0:'75'. 
+2019-06-09 19:12:25.288 (IAQM) IAQM - Index-IAQ Index:75 
+2019-06-09 19:12:25.288 (IAQM - Index Accuracy) Updating device from 3:'Low' to have values 3:'Low'. 
+2019-06-09 19:12:25.294 (IAQM) IAQM - Index Accuracy-IAQ IndexAccuracy:3,Low 
+2019-06-09 19:12:25.294 (IAQM - Air Quality) Updating device from 2:'Moderate' to have values 2:'Moderate'. 
+2019-06-09 19:12:25.299 (IAQM) Air Quality:2,Moderate 
+2019-06-09 19:12:25.299 (IAQM - Temperature) Updating device from 0:'20' to have values 0:'20'. 
+2019-06-09 19:12:25.303 (IAQM) IAQM - Temperature-Temperature:20 
+2019-06-09 19:12:25.303 (IAQM - Humidity) Updating device from 47:'1' to have values 47:'1'. 
+2019-06-09 19:12:25.306 (IAQM) IAQM - Humidity-Humidity:47 
+2019-06-09 19:12:25.306 (IAQM - Air Pressure) Updating device from 0:'1021;0' to have values 0:'1021;0'. 
+2019-06-09 19:12:25.310 (IAQM) IAQM - Air Pressure-Air Pressure:1021 
+2019-06-09 19:12:25.310 (IAQM) Air Quality Devices updated 
+2019-06-09 19:12:25.316 (IAQM - Ambient Light) Updating device from 0:'4' to have values 0:'4'. 
+2019-06-09 19:12:25.319 (IAQM) IAQM - Ambient Light-Lux:4 
+2019-06-09 19:12:25.319 (IAQM) Tinkerforge updating... 
+2019-06-09 19:12:25.320 (IAQM) LCD Display cleared 
+2019-06-09 19:12:25.322 (IAQM) LCD Lines written 
+2019-06-09 19:12:25.322 (IAQM) RGB LED Color set 
+2019-06-09 19:12:25.322 (IAQM - Status) Updating device from 0:'OK: 66,20,47,1021' to have values 0:'OK: 75,20,47,1021'. 
+2019-06-09 19:12:25.328 (IAQM) OK: 75,20,47,1021 
+2019-06-09 19:12:25.437 (IAQM) Update - OK. ```
 
 ## ToDo
 See TODO.md
 
 ## Version
-v1.0.0 (Build 20190608)
+v1.1.0 (Build 20190609)
 
