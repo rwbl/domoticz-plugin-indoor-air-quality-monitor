@@ -1,9 +1,8 @@
-#Indoor Air Quality Monitor v1.1.0
+# Indoor Air Quality Monitor v1.1.0 (Build 20190609)
 
 # Objectives
 * To measure the Indoor Air Quality (IAQ) Index, Condition and Accuracy, Air Pressure, Humidity, Temperature, Illuminance.
 * To display values in an Indoor Air Quality Station and in Domoticz.
-* To notify if the Indoor Air Quality is below threshold.
 
 ## Solution
 An **Indoor Air Quality Station** is build out of the [Tinkerforge](https://www.tinkerforge.com/en) Building Blocks:
@@ -295,7 +294,3 @@ The Indoor Air Quality Monitor runs every 60 seconds (Heartbeat interval) which 
 
 ## ToDo
 See TODO.md
-
-## Version
-v1.1.0 (Build 20190609)
-
