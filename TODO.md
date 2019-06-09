@@ -1,4 +1,6 @@
 ### Status 20190609
+_Note__
+These to-dos are planned for a next major version 2.0.
 
 #### UPD: Documentation Concept
 Write up more details about the concept and the learnings. Use for the workbook  Domoticz Home Automation.
@@ -54,4 +56,8 @@ Solution via dzVents script.
 _Status_
 Not started.
 
+#### NEW: Device IAQ Index customized icon
+Create a customized icon and add to the device.
+_Status_
+Not started.
 
