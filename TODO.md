@@ -12,12 +12,12 @@ Functionality (to be reviewed):
 * Button 1: Turn LCD backlight on/off
 * Button 2: TBD
 * Button 3: TBD
-* Button 4: TBD
+* Button 4: Version info
 _Status_
 Not started.
 
 #### NEW: Control Hue light(s) if Illuminance below threshold
-Either by using parameter Mode3 with idx1,idxN,threshold-level
+Either by using plugin parameter Mode3 with idx1,idxN,threshold-level
 or
 dzVents script.
 _Status_
@@ -42,3 +42,16 @@ Just an idea. Will probably drop.
 Use API function set_status_led_config(config) with parameter STATUS_LED_CONFIG_SHOW_HEARTBEAT = 2
 _Status_
 Not started.
+
+#### NEW: LCD 20x Trend Indicator
+Indicate by using custom character arrow up,down, equal the trend for a measurement.
+_Status_
+Not started.
+
+#### NEW: Turn LCD Backlight and RGB LED Off between 2200-0700
+Just an idea in case the lights are annoying.
+Solution via dzVents script.
+_Status_
+Not started.
+
+
