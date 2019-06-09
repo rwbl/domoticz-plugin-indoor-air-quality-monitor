@@ -1,13 +1,15 @@
 #Indoor Air Quality Monitor v1.1.0
 
 # Objectives
-* To measure the Indoor Air Quality (IAQ) Index (ppm), Condition and Accuracy, Air Pressure (mbar), Humidity (%), Temperature (C), Illuminance (lx).
+* To measure the Indoor Air Quality (IAQ) Index, Condition and Accuracy, Air Pressure, Humidity, Temperature, Illuminance.
 * To display values in an Indoor Air Quality Station and in Domoticz.
 * To notify if the Indoor Air Quality is below threshold.
 
 ## Solution
 An **Indoor Air Quality Station** is build out of the [Tinkerforge](https://www.tinkerforge.com/en) Building Blocks:
 Master Brick & WiFi Extension and Bricklets Air Quality, LCD 20x4 display, RGB LED, Ambient Light.
+
+![domoticz-tinkerforge-airqualitymonitor-p2](https://user-images.githubusercontent.com/47274144/59162141-56854400-8aec-11e9-843a-335f28a6f059.png)
 
 The **Air Quality Bricklet** measures the IAQ Index (ppm), IAQ Condition, IAQ Accuracy, Air Pressure (mbar), Humidity (%), Temperature (C).
 There are 6 IAQ Condition Levels with range=condition (color):
@@ -25,6 +27,10 @@ The **Domoticz Indoor Air Quality Devices** Name (Type,SubType):
 * Index (General,Custom Sensor), Index Accuracy (General,Alert), Air Quality (General, Alert [Text=Level]
 * Temperature (Temp,LaCrosse TX3),Humidity (Humidity,LaCrosse TX3),Air Pressure (General,Barometer),Ambient Light (Lux,Lux)
 * LCD Backlight (Light/Switch,Switch), Status (General,Text)
+
+![domoticz-tinkerforge-airqualitymonitor-d](https://user-images.githubusercontent.com/47274144/59162134-440b0a80-8aec-11e9-967d-b7aa0f3ec604.png)
+
+![domoticz-tinkerforge-airqualitymonitor-f](https://user-images.githubusercontent.com/47274144/59162130-335a9480-8aec-11e9-8ae6-77c00884e2a1.png)
 
 ## Hardware
 * Raspberry Pi 3B+ (Domoticz Server)
