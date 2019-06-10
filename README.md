@@ -75,7 +75,9 @@ tinkerforge tinkerforge-2.1.22.dist-info
 
 ## Plugin Folder and File
 Each plugin requires a dedicated folder which contains the plugin, mandatory named plugin.py.
+``` 
 mkdir /home/pi/domoticz/plugins/airqualitymonitor
+``` 
 
 As a starter, take the template from [here](https://github.com/domoticz/domoticz/blob/master/plugins/examples/BaseTemplate.py).
 Save as plugin.py in the folder /home/pi/domoticz/plugins/airqualitymonitor
@@ -83,10 +85,10 @@ Save as plugin.py in the folder /home/pi/domoticz/plugins/airqualitymonitor
 ## Python Plugin Path to Tinkerforge API Bindings
 In the Python Plugin code amend the import path to enable using the Tinkerforge API Bindings:
 ``` 	
-	from os import path
-	import sys
-	sys.path
-	sys.path.append('/usr/local/lib/python3.5/dist-packages')
+from os import path
+import sys
+sys.path
+sys.path.append('/usr/local/lib/python3.5/dist-packages')
 ``` 
 
 ## Development Setup
@@ -133,7 +135,7 @@ The Master Brick Blue LED is turned off indicating boot mode.
 9. Flash
 10. Master Brick reboots > Blue LED turns on and the Brick Viewer shows tabs Brick and Bricklets
 
-See next Air Quality Prototype
+See next Air Quality Prototype.
 
 ## Air Quality Monitor Prototype
 Build the prototype by connecting the Tinkerforge building blocks (see hardware).
@@ -291,6 +293,13 @@ The Indoor Air Quality Monitor runs every 60 seconds (Heartbeat interval) which 
 2019-06-09 19:12:25.322 (IAQM - Status) Updating device from 0:'OK: 66,20,47,1021' to have values 0:'OK: 75,20,47,1021'. 
 2019-06-09 19:12:25.328 (IAQM) OK: 75,20,47,1021 
 2019-06-09 19:12:25.437 (IAQM) Update - OK. ```
+
+## Custom Icon
+A custom icon _Air Quality_ can be used for the _IAQ Index device_ (General,Custom Sensor).
+To add the custom icon:
+* Open Web-UI > Setup > MoreOptions > Custom Icons
+* Browse for the file CustomIcons.zip and upload
+* Select the IAQM Index widget > Edit > Sensor Icon > Select Air Quality > Update
 
 ## ToDo
 See TODO.md
