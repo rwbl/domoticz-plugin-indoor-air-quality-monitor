@@ -1,4 +1,4 @@
-### v1.0.1 (Build 20190609)
+### v1.1.0 (Build 20190609)
 * UPD: Plugin renamed to Indoor Air Quality Monitor (IAQM)
 * UPD: Changed IAQ Levels & Color according IAQ Standard
 * UPD: Changed Air Quality Device (Voltcraft) to Custom Device to match IAQ Index
