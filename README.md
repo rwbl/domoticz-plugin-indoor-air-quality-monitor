@@ -27,7 +27,7 @@ The **Domoticz Indoor Air Quality Devices** Name (Type,SubType):
 * Index (General,Custom Sensor), Index Accuracy (General,Alert), Air Quality (General, Alert [Text=Level].
 * Temperature (Temp,LaCrosse TX3),Humidity (Humidity,LaCrosse TX3),Air Pressure (General,Barometer),Ambient Light (Lux,Lux).
 * LCD Backlight (Light/Switch,Switch), Status (General,Text).
-* _Note:_ Control functions, like switch LCD backlight, switch light depending Lux are build using dzVents Lua scripts.
+* _Note:_ Control functions, like switch LCD backlight, switch lights (depending Lux) are build using dzVents Lua scripts.
 
 ![domoticz-tinkerforge-airqualitymonitor-d](https://user-images.githubusercontent.com/47274144/59162134-440b0a80-8aec-11e9-967d-b7aa0f3ec604.png)
 
