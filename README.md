@@ -3,6 +3,7 @@
 # Objectives
 * To measure the Indoor Air Quality (IAQ) Index, Condition and Accuracy, Air Pressure, Humidity, Temperature, Illuminance.
 * To display values in an Indoor Air Quality Station and in Domoticz.
+* To perform control functions like switch LCD backlight On|Off (via switch or timer), switch light On|Off depending Lux.
 
 ## Solution
 An **Indoor Air Quality Station** is build out of the [Tinkerforge](https://www.tinkerforge.com/en) Building Blocks:
@@ -23,9 +24,10 @@ The **RBG LED Bricklet** indicates the Indoor Air Quality Level Color
 
 The Domoticz Plugin **Indoor Air Quality Monitor** polls in regular intervals data from the **Indoor Air Quality Station**.
 The **Domoticz Indoor Air Quality Devices** Name (Type,SubType):
-* Index (General,Custom Sensor), Index Accuracy (General,Alert), Air Quality (General, Alert [Text=Level]
-* Temperature (Temp,LaCrosse TX3),Humidity (Humidity,LaCrosse TX3),Air Pressure (General,Barometer),Ambient Light (Lux,Lux)
-* LCD Backlight (Light/Switch,Switch), Status (General,Text)
+* Index (General,Custom Sensor), Index Accuracy (General,Alert), Air Quality (General, Alert [Text=Level].
+* Temperature (Temp,LaCrosse TX3),Humidity (Humidity,LaCrosse TX3),Air Pressure (General,Barometer),Ambient Light (Lux,Lux).
+* LCD Backlight (Light/Switch,Switch), Status (General,Text).
+* _Note:_ Control functions, like switch LCD backlight, switch light depending Lux are build using dzVents Lua scripts.
 
 ![domoticz-tinkerforge-airqualitymonitor-d](https://user-images.githubusercontent.com/47274144/59162134-440b0a80-8aec-11e9-967d-b7aa0f3ec604.png)
 
