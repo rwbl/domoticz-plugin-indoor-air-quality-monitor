@@ -1,7 +1,7 @@
 --[[
     iaqm_lcd_backlight_control.lua
     Switch the lcd backlight off at 2200 and on at 0700.
-    Interpreter: dzVents, Device
+    Interpreter: dzVents, timer
     Author: Robert W.B. Linn
     Version: 20190610
 ]]--
