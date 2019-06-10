@@ -302,5 +302,17 @@ To add the custom icon:
 * Browse for the file _CustomIcons.zip_ and upload
 * Select the IAQM Index widget > Edit > Sensor Icon > Select Air Quality > Update
 
+## Custom Air Quality Level Parameter
+The Air Quality parameter for the levels can be modified in the file **plugin.py**.
+
+```
+# Indoor Air Quality 1+6 Levels & Conditions & colors - see xml definition text
+# The first (1) = 0 which is just a place holder to accomodate level array index 1 to 6
+AIRQUALITYLEVELLIMIT = [0,50,100,150,200,300,500]
+AIRQUALITYLEVELCONDITION = ["Unknown","Good","Moderate","Unhealthy Sensitive Groups","Unhealthy","Very Unhealthy","Hazardous"]
+AIRQUALITYLEVELCOLOR = [[0,0,255],[0,255,0],[255,255,0],[255,165,0],[255,0,0],[128,0,128],[128,0,0]]
+AIRQUALITYACCURACY = ["Unknown","High","Medium","Low","Unreliable"]
+```
+
 ## ToDo
 See TODO.md
