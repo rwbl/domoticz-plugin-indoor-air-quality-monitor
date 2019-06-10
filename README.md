@@ -293,12 +293,13 @@ The Indoor Air Quality Monitor runs every 60 seconds (Heartbeat interval) which 
 2019-06-09 19:12:25.322 (IAQM - Status) Updating device from 0:'OK: 66,20,47,1021' to have values 0:'OK: 75,20,47,1021'. 
 2019-06-09 19:12:25.328 (IAQM) OK: 75,20,47,1021 
 2019-06-09 19:12:25.437 (IAQM) Update - OK. ```
+```
 
 ## Custom Icon
 A custom icon _Air Quality_ can be used for the _IAQ Index device_ (General,Custom Sensor).
 To add the custom icon:
 * Open Web-UI > Setup > MoreOptions > Custom Icons
-* Browse for the file CustomIcons.zip and upload
+* Browse for the file _CustomIcons.zip_ and upload
 * Select the IAQM Index widget > Edit > Sensor Icon > Select Air Quality > Update
 
 ## ToDo
