@@ -314,5 +314,10 @@ AIRQUALITYLEVELCOLOR = [[0,0,255],[0,255,0],[255,255,0],[255,165,0],[255,0,0],[1
 AIRQUALITYACCURACY = ["Unknown","High","Medium","Low","Unreliable"]
 ```
 
+## dzVents Lua Scripts
+Sample scripts to perform actions.
+* iaqm_ambient_light_control.lua = Switch Hue Light ON | OFF depending Lux below orabove threshold.
+* iaqm_lcd_backlight_control.lua = Turn the LCD Backlight OFF at 22:00 and ON at 07:00.
+
 ## ToDo
 See TODO.md
