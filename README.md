@@ -3,7 +3,7 @@
 # Objectives
 * To measure the Indoor Air Quality (IAQ) Index, Condition and Accuracy, Air Pressure, Humidity, Temperature, Illuminance.
 * To display values in an Indoor Air Quality Station and in Domoticz.
-* To perform control functions like switch LCD backlight On|Off (via switch or timer), switch light On|Off depending Lux.
+* To enable additional functionality by using scripts (preferred dzVents Lua scripts), i.e. switch LCD backlight, switch room light depending Luxthreshold.
 
 ## Solution
 An **Indoor Air Quality Station** is build out of the [Tinkerforge](https://www.tinkerforge.com/en) Building Blocks:
@@ -306,7 +306,6 @@ To add the custom icon:
 
 ## Custom Air Quality Level Parameter
 The Air Quality parameter for the levels can be modified in the file **plugin.py**.
-
 ```
 # Indoor Air Quality 1+6 Levels & Conditions & colors - see xml definition text
 # The first (1) = 0 which is just a place holder to accomodate level array index 1 to 6
@@ -316,10 +315,10 @@ AIRQUALITYLEVELCOLOR = [[0,0,255],[0,255,0],[255,255,0],[255,165,0],[255,0,0],[1
 AIRQUALITYACCURACY = ["Unknown","High","Medium","Low","Unreliable"]
 ```
 
-## dzVents Lua Scripts
+## Enhancements (dzVents Lua Scripts)
 Sample scripts to perform actions.
-* iaqm_ambient_light_control.lua = Switch Hue Light ON | OFF depending Lux below or above threshold.
-* iaqm_lcd_backlight_control.lua = Turn the LCD Backlight OFF at 22:00 and ON at 07:00.
+* LCD Backlight turn OFF at 22:00 and ON at 07:00 (iaqm_lcd_backlight_control.lua).
+* Switch Hue Light ON | OFF depending Ambient Light Lux below or above threshold (iaqm_ambient_light_control.lua).
 
 ## ToDo
 See TODO.md
