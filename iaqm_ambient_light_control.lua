@@ -2,7 +2,7 @@
     iaqm_ambient_light_control.lua
     Switch light(s) if the measued lux value is below threshold.
     The threshold is set by the user variable TH_IAQM_AMBIENTLIGHT - idx=1, type=Integer,value=100 (or other)
-    This example runs on a Domoticz development server and switches a light on the Domoticz production server via HTTP API request.
+    This example runs on a Domoticz development server and switches a Hue light (idx=118) on the Domoticz production server via HTTP API request.
     Interpreter: dzVents, Device
     Author: Robert W.B. Linn
     Version: 20190610
@@ -13,8 +13,7 @@ local DOMOTICZURL = 'http://rpi-domoticz-ip:8080'
 local REQUESTURL = DOMOTICZURL .. '/json.htm?type=command&param=switchlight&idx=118&switchcmd='
 
 -- NOT USED for now
--- ensure the httpResponse name is unique across all dzVents scripts!
--- use the scriptname plus Callback
+-- ensure the httpResponse name is unique across all dzVents scripts! use the scriptname plus Callback
 local HTTPCALLBACKNAME = 'IAQMAmbientLightControlCallback'
 
 -- idx of the devices
