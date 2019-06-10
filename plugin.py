@@ -1,4 +1,4 @@
-# Domoticz Home Automation - Air Quality Monitor
+# Domoticz Home Automation - Indoor Air Quality Monitor
 # Monitor the Indoor Air Quality (IAQ) from the Tinkerforge Air Quality Bricklet, display on LCD 20x4 Display and indicate status on RGB LED.
 # @author Robert W.B. Linn
 # @version See plugin xml definition
