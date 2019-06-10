@@ -18,13 +18,6 @@ Functionality (to be reviewed):
 _Status_
 Not started.
 
-#### NEW: Control Hue light(s) if Illuminance below threshold
-Either by using plugin parameter Mode3 with idx1,idxN,threshold-level
-or
-dzVents script.
-_Status_
-Not started.
-
 #### NEW: RGB LED use as Table Light
 Kind of Hue color like - bit of soft color - use Domoticz Color switch  & On/Off switch..
 _Status_
@@ -49,15 +42,3 @@ Not started.
 Indicate by using custom character arrow up,down, equal the trend for a measurement.
 _Status_
 Not started.
-
-#### NEW: Turn LCD Backlight and RGB LED Off between 2200-0700
-Just an idea in case the lights are annoying.
-Solution via dzVents script.
-_Status_
-Not started.
-
-#### NEW: Device IAQ Index customized icon
-Create a customized icon and add to the device.
-_Status_
-Not started.
-
