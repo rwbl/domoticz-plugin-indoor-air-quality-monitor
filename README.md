@@ -3,7 +3,7 @@
 # Objectives
 * To measure the Indoor Air Quality (IAQ) Index, Condition and Accuracy, Air Pressure, Humidity, Temperature, Illuminance.
 * To display values in an Indoor Air Quality Station and in Domoticz.
-* To enable additional functionality by using scripts (preferred dzVents Lua scripts), i.e. switch LCD backlight, switch room light depending Luxthreshold.
+* To enable additional functionality by using scripts (preferred dzVents Lua scripts), i.e. switch LCD backlight, switch room light depending Lux threshold.
 
 ## Solution
 An **Indoor Air Quality Station** is build out of the [Tinkerforge](https://www.tinkerforge.com/en) Building Blocks:
