@@ -1,6 +1,4 @@
-### Status 20190610
-_Note__
-These to-dos are planned for a next major version 2.0.
+### Status 20190611
 
 #### UPD: Documentation Concept
 Write up more details about the concept and the learnings. Use for the workbook  Domoticz Home Automation.
@@ -8,11 +6,11 @@ _Status_
 Not started.
 
 #### NEW: Push Buttons
-Use the four LCD 20x4 Bricklet Push Buttons to extend functionality. 
+Use the four LCD Bricklet Push Buttons to extend functionality. 
 Use the [Push Button Add-on](https://www.tinkerforge.com/en/shop/kits/weather-station-push-button-add-on.html) .
 Functionality (to be reviewed):
 * Button 1: Turn LCD backlight on/off
-* Button 2: TBD
+* Button 2: Turn LED on/off
 * Button 3: TBD
 * Button 4: Version info
 _Status_
@@ -27,7 +25,7 @@ Not started.
 Instead of ip connect & disconnet for every heartbeat, use the function onStart to connect and onStop to disconnect.
 This functionality is required for the push buttons callback.
 
-#### NEW: Replace RGB LED by IO-4 with LED R-G-B.
+#### NEW: Replace RGB LED by IO-4 with three LEDs R-G-B.
 Just an idea. Will probably drop.
 _Status_
 Not started.
@@ -38,7 +36,7 @@ Use API function set_status_led_config(config) with parameter STATUS_LED_CONFIG_
 _Status_
 Not started.
 
-#### NEW: LCD 20x Trend Indicator
+#### NEW: LCD Trend Indicator
 Indicate by using custom character arrow up,down, equal the trend for a measurement.
 _Status_
 Not started.
