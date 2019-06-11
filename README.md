@@ -1,4 +1,5 @@
-# Indoor Air Quality Monitor v1.1.0 (Build 20190609)
+# Indoor Air Quality Monitor 
+v1.1.0 (Build 20190609)
 
 # Objectives
 * To measure the Indoor Air Quality (IAQ) Index, Condition and Accuracy, Air Pressure, Humidity, Temperature, Illuminance.
@@ -6,15 +7,15 @@
 * To enable additional functionality by using scripts (preferred dzVents Lua scripts), i.e. switch LCD backlight, switch room light depending Lux threshold.
 
 ## Solution
-An **Indoor Air Quality Station** is build out of the [Tinkerforge](https://www.tinkerforge.com/en) Building Blocks:
-Master Brick & WiFi Extension and Bricklets Air Quality, LCD 20x4 display, RGB LED, Ambient Light.
+An **Indoor Air Quality Station** is build out of [Tinkerforge](https://www.tinkerforge.com/en) Building Blocks:
+Master Brick & WiFi Extension, Bricklets Air Quality, LCD 20x4 Display, RGB LED, Ambient Light.
 
 ![domoticz-tinkerforge-airqualitymonitor-p2](https://user-images.githubusercontent.com/47274144/59162141-56854400-8aec-11e9-843a-335f28a6f059.png)
 
 The **Air Quality Bricklet** measures the IAQ Index (ppm), IAQ Condition, IAQ Accuracy, Air Pressure (mbar), Humidity (%), Temperature (C).
-There are 6 IAQ Condition Levels with range=condition (color):
+* There are 6 IAQ Condition Levels with range=condition (color):
 0-50=Good (green), 51-100=Moderate (yellow), 101-150=Unhealthy sensitive groups (orange), 151-200=Unhealthy (red), 201-300=Very Unhealthy (purple), 301-500=Hazardous (maroon).<br/>
-The IAQ Index Accuracy has 4 levels Unreliable, Low, Medium, High.
+* The IAQ Index Accuracy has 4 levels Unreliable, Low, Medium, High.
 
 The **Ambient Light Bricklet** measures the Illuminance (lx).
 
@@ -23,11 +24,12 @@ The **LCD 20x4 Bricklet** displays the IAQ Index ppm, IAQ Condition, Temperature
 The **RBG LED Bricklet** indicates the Indoor Air Quality Level Color
 
 The Domoticz Plugin **Indoor Air Quality Monitor** polls in regular intervals data from the **Indoor Air Quality Station**.
-The **Domoticz Indoor Air Quality Devices** Name (Type,SubType):
+The **Domoticz Indoor Air Quality Devices** created are - Name (Type,SubType):
 * Index (General,Custom Sensor), Index Accuracy (General,Alert), Air Quality (General, Alert [Text=Level].
 * Temperature (Temp,LaCrosse TX3),Humidity (Humidity,LaCrosse TX3),Air Pressure (General,Barometer),Ambient Light (Lux,Lux).
 * LCD Backlight (Light/Switch,Switch), Status (General,Text).
-* _Note:_ Control functions, like switch LCD backlight, switch lights (depending Lux) are build using dzVents Lua scripts.
+_Note:_
+Enhanced functionality, like switch LCD backlight, switch lights (depending Lux) are build using dzVents Lua scripts.
 
 ![domoticz-tinkerforge-airqualitymonitor-d](https://user-images.githubusercontent.com/47274144/59162134-440b0a80-8aec-11e9-967d-b7aa0f3ec604.png)
 
@@ -55,13 +57,14 @@ Versions for developing & using this plugin.
 ## Prepare Tinkerforge Python API bindings
 The Tinkerforge Python API bindings are required, installed using pip3.
 Pip3 installs the bindings in a common dist-packages folder, which is on the Raspberry Pi Domoticz Server, folder:
+``` 
 /usr/lib/python3/dist-packages
-
+``` 
 Running pip3:
 ``` 
 sudo pip3 install tinkerforge
 ``` 
-Log Output:
+_Log Output_
 Collecting tinkerforge
 Installing collected packages: tinkerforge
 Successfully installed tinkerforge-2.1.22
@@ -97,9 +100,9 @@ sys.path.append('/usr/local/lib/python3.5/dist-packages')
 Development PC:
 * Thonny to develop the Python Plugin
 * A shared drive Z: is defined pointing to /home/pi/domoticz
-* Browser Tab Domoticz Web UI > Setup > Log
-* Browser Tab Domoticz Web UI > Setup > Hardware
-* Browser Tab Domoticz Web UI > Setup > Devices
+* Browser Tab Domoticz GUI > Setup > Log
+* Browser Tab Domoticz GUI > Setup > Hardware
+* Browser Tab Domoticz GUI > Setup > Devices
 * WinSCP session connected to the Domoticz server
 * Putty session connected to the Domoticz server
 
@@ -110,20 +113,22 @@ The development process step used are:
 1. Thonny develop z:\plugins\airqualitymonitor\plugin.py
 2. Make changes and save plugin.py
 3. Restart Domoticz from Terminal: sudo service domoticz.sh restart
-4. Wait a moment and refresh the Browser Tab Domoticz Web UI > Log
+4. Wait a moment and refresh the Browser Tab Domoticz GUI > Log
 5. Check the log and fix as required
 
 !IMPORTANT!
-In the Domoticz Web UI > Setup > Settings,  enable accepting new hardware.
+In the Domoticz GUI > Setup > Settings, enable accepting new hardware.
 This is required to add the new hardware with its device and monitor if the plugin code is running without errors.
 
 ## Tinkerforge Master Brick and Bricklets
 Ensure the Master Brick and Bricklets are running with the latest firmware.
 To update the Tinkerforge [Brick Viewer](https://www.tinkerforge.com/en/doc/Software/Brickv.html#brickv) is required.
+
 For Tinkerforge development purposes installed the Brick Viewer and the required Brick Daemon on a Linux PC (called the piDevBook as running [Raspberry Pi Desktop](https://www.raspberrypi.org/downloads/raspberry-pi-desktop/).
-Steps to update the Master Brick and Bricklets:
+
+**Steps to update the Master Brick and Bricklets**
 1. Connect the Master Brick to the piDevBook using USB mini cable
-2. Start Brick  Viewer (ensure latest version, used v2.4.4)
+2. Start the Brick Viewer (ensure to use the latest version)
 3. Connect localhost:4223
 4. Check if Master brickand Bricklets found
 5. Select Update and check version differences
@@ -133,36 +138,36 @@ b. Button Reset - press and release
 c. Button Erase - release!
 The Master Brick Blue LED is turned off indicating boot mode.
 7. The Brick Viewer shows only the Brick Tab
-8. Refresh serial port= Serial Port: /dev/ttyACMo, Fiirmware: Master (2.4.10)
+8. Refresh serial port = Serial Port: /dev/ttyACMo, Firmware: Master (2.4.10)
 9. Flash
 10. Master Brick reboots > Blue LED turns on and the Brick Viewer shows tabs Brick and Bricklets
 
 See next Air Quality Prototype.
 
 ## Air Quality Monitor Prototype
-Build the prototype by connecting the Tinkerforge building blocks (see hardware).
+Build the prototype by connecting the Tinkerforge Building Blocks (see hardware).
 Connect the Master Brick to a device running the Brick Deamon and Viewer.
-Just in a nutshell the actions taken to setup the Tinkerforge building blocks using the Tinkerforge Brick Viewer.
+Just in a nutshell the actions taken to setup the Tinkerforge Building Blocks using the Tinkerforge Brick Viewer.
 * Update the devices firmware
-* Set the WiFi master extension fixed IP address in client mode
-* Obtain the UID's of the Tinkerforge bricklets as required by the Python plugin
+* Set the WiFi Master Extension fixed IP address in client mode
+* Obtain the UID's of the Tinkerforge Bricklets as required by the Python plugin
 
-After setting up the Tinkerforge building blocks, reset the master brick and check if the master brick can be reached via WLAN:
+After setting up the Tinkerforge Building Blocks, reset the Master Brick and check if the Master Brick can be reached via WLAN:
 ``` 
 ping tf-wifi-ext-ip-address
 ``` 
 
 ## Domoticz Web UI's
-Open windows Domoticz Setup > Hardware, Domoticz Setup > Log, Domoticz Setup > Devices
+Open windows Domoticz GUI Setup > Hardware, Domoticz GUI Setup > Log, Domoticz GUI Setup > Devices
 This is required to add the new hardware with its device and monitor if the plugin code is running without errors.
 
 ## Create folder
 ```
-cd /home/pi/domoticz/plugins/airqualitymonitor
+cd /home/pi/domoticz/plugins/indoorairqualitymonitor
 ```
 
 ## Create the plugin
-The plugin has a mandatory filename **plugin.py** located in the plugin folder /home/pi/domoticz/plugins/airqualitymonitor.
+The plugin has a mandatory filename **plugin.py** located in the plugin folder /home/pi/domoticz/plugins/indoorairqualitymonitor.
 For Python development Thonny, running on a Windows 10 device, is used.
 
 Lookup for details in the source code **plugin.py** (well documented).
@@ -171,16 +176,20 @@ Lookup for details in the source code **plugin.py** (well documented).
 * INIT: set self vars to handle heartbeat count,ip connection state and UID list
 * FIRST TIME: _onStart_ to create the Domoticz Devices and configure Tinkerforge Building Blocks
 * NEXT TIME(S):
-	*_onCommand_ to handle state changes
+	*_onCommand_
+		* Handle state changes
 		* LCD Backlight on or off
-	*_onHearbeat_ to update LCD 20x4 display, RGB LED and Domoticz devices
+	*_onHearbeat_
+		* update LCD 20x4 display, RGB LED and Domoticz devices
 
 The devices are manually added to the Domoticz Dashboard.
-In addition a roomplan "Indoor Air Quality Monitor" is defined with all the AQM devices and a simple floorplan.
+In addition a roomplan **Indoor Air Quality Monitor** is defined with all the IAQM devices and a simple floorplan using the roomplan.
 
 ## Restart Domoticz
 Restart Domoticz to find the plugin:
+```
 sudo systemctl restart domoticz.service
+```
 
 **Note**
 When making changes to the Python plugin code, ensure to restart Domoticz and refresh any of the Domoticz Web UI's.
@@ -193,11 +202,11 @@ If this option is not enabled, no new Air Quality device is created.
 Check in the Domoticz log as error message Python script at the line where the new device is used
 (i.e. Domoticz.Debug("Device created: "+Devices[1].Name))
 
-In Domoticz Web UI, select tab Setup > Hardware and add the new hardware Air Quality Monitor.
+In the Domoticz GUI > Setup > Hardware add the new hardware Indoor Air Quality Monitor.
 The initial check interval is set at 60 seconds. This is a good value for testing, but for final version set to higher value like every 5 minutes (300 seconds).
 
 ## Add Hardware - Check the Domoticz Log
-After adding,ensure to check the Domoticz Log (Domoticz Web UI, select tab Setup > Log)
+After adding,ensure to check the Domoticz Log (Domoticz GUI > Setup > Log)
 Example:
 ```
 2019-06-09 10:08:23.075 Status: PluginSystem: Started, Python version '3.5.3'. 
@@ -300,7 +309,7 @@ The Indoor Air Quality Monitor runs every 60 seconds (Heartbeat interval) which 
 ## Custom Icon
 A custom icon _Air Quality_ can be used for the _IAQ Index device_ (General,Custom Sensor).
 To add the custom icon:
-* Open Web-UI > Setup > MoreOptions > Custom Icons
+* Open Domoticz GUI > Setup > MoreOptions > Custom Icons
 * Browse for the file _CustomIcons.zip_ and upload
 * Select the IAQM Index widget > Edit > Sensor Icon > Select Air Quality > Update
 
@@ -316,9 +325,13 @@ AIRQUALITYACCURACY = ["Unknown","High","Medium","Low","Unreliable"]
 ```
 
 ## Enhancements (dzVents Lua Scripts)
-Sample scripts to perform actions.
-* LCD Backlight turn OFF at 22:00 and ON at 07:00 (iaqm_lcd_backlight_control.lua).
-* Switch Hue Light ON | OFF depending Ambient Light Lux below or above threshold (iaqm_ambient_light_control.lua).
+Sample enhancement scripts:
+* **LCD Backlight**: turn OFF at 22:00 and ON at 07:00 (iaqm_lcd_backlight_control.lua).
+* **Hue Light(s)**: Switch  ON | OFF depending Ambient Light Lux below or above threshold (iaqm_ambient_light_control.lua).
+
+## Hints
+* Indoor Air Quality Station: taking the power off and on again, update the IAQM hardware in Domoticz to init the Tinkerforge Building Blocks.
+* RGB LED: Turn Off by setting the brightness to 0 (in Domoticz Web-UI Setup > Hardware).
 
 ## ToDo
 See TODO.md
