@@ -21,7 +21,7 @@ The **Ambient Light Bricklet** measures the Illuminance (lx).
 
 The **LCD 20x4 Bricklet** displays the IAQ Index ppm, IAQ Condition, Temperature C, Humidity %, Air Pressure mbar, Illuminance lx.
 
-The **RBG LED Bricklet** indicates the Indoor Air Quality Level Color
+The **RBG LED Bricklet** indicates the Indoor Air Quality Level Color.
 
 The Domoticz Plugin **Indoor Air Quality Monitor** polls in regular intervals data from the **Indoor Air Quality Station**.
 The **Domoticz Indoor Air Quality Devices** created are - Name (Type,SubType):
