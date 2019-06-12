@@ -7,6 +7,7 @@ v1.1.0 (Build 20190609)
 * To enable additional functionality by using scripts (preferred dzVents Lua scripts), i.e. switch LCD backlight, switch room light depending Lux threshold.
 
 _Abbreviations_: IAQ=Indoor Air Quality, GUI=Domoticz Web UI.
+_Note_: The screenshots mightnot reflect the latest version.
 
 ## Solution
 An **Indoor Air Quality Station** is build out of [Tinkerforge](https://www.tinkerforge.com/en) Building Blocks:
@@ -305,7 +306,7 @@ The Indoor Air Quality Monitor runs every 60 seconds (Heartbeat interval) which 
 2019-06-09 19:12:25.322 (IAQM) RGB LED Color set 
 2019-06-09 19:12:25.322 (IAQM - Status) Updating device from 0:'OK: 66,20,47,1021' to have values 0:'OK: 75,20,47,1021'. 
 2019-06-09 19:12:25.328 (IAQM) OK: 75,20,47,1021 
-2019-06-09 19:12:25.437 (IAQM) Update - OK. ```
+2019-06-09 19:12:25.437 (IAQM) Update - OK.
 ```
 
 ## Custom Icon

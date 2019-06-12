@@ -1,3 +1,6 @@
+### v1.1.1 (Build 20190612)
+*  UPD:IMproved errorhandling and init bricks
+
 ### v1.1.0 (Build 20190609)
 * UPD: Plugin renamed to Indoor Air Quality Monitor (IAQM)
 * UPD: Changed IAQ Levels & Color according IAQ Standard

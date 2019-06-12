@@ -10,13 +10,13 @@
 
 
 """
-<plugin key="IndoorAirQualityMonitor" name="Indoor Air Quality Monitor" author="rwbL" version="1.1.0 (Build 20190609)">
+<plugin key="IndoorAirQualityMonitor" name="Indoor Air Quality Monitor" author="rwbL" version="1.1.1 (Build 20190612)">
     <description>
-        <h2>Indoor Air Quality Monitor v1.1.0</h2><br/>
+        <h2>Indoor Air Quality Monitor v1.1.1</h2><br/>
         Measure the Indoor Air Quality (IAQ) Index (ppm), Condition and Accuracy, Air Pressure (mbar), Humidity (%), Temperature (C), Illuminance (lx).<br/>
-		There are 6 IAQ Levels with range=condition (color):<br/>
-		0-50=Good (green), 51-100=Moderate (yellow), 101-150=Unhealthy sensitive groups (orange), 151-200=Unhealthy (red), 201-300=Very Unhealthy (purple), 301-500=Hazardous (maroon).<br/>
-		The IAQ Index Accuracy has 4 levels Unreliable, Low, Medium, High.
+        There are 6 IAQ Levels with range=condition (color):<br/>
+        0-50=Good (green), 51-100=Moderate (yellow), 101-150=Unhealthy sensitive groups (orange), 151-200=Unhealthy (red), 201-300=Very Unhealthy (purple), 301-500=Hazardous (maroon).<br/>
+        The IAQ Index Accuracy has 4 levels Unreliable, Low, Medium, High.
         <h3>Indoor Air Quality Station</h3>
         <ul style="list-style-type:square">
             <li>The Indoor Air Quality Station uses Tinkerforge Build Blocks Master Brick & WiFi Extension and Bricklets Air Quality, LCD 20x4 display, RGB LED, Ambient Light.</li>
@@ -42,7 +42,7 @@
         </ul>
     </description>
     <params>
-        <param field="Address" label="Host" width="200px" required="true" default="TF-WIFI-EXT-IP"/>
+        <param field="Address" label="Host" width="200px" required="true" default="192.168.1.114"/>
         <param field="Port" label="Port" width="75px" required="true" default="4223"/>
         <param field="Mode1" label="UID (5)" width="200px" required="true" default="6yLduG,Jvj,BHN,Jng,yyc"/>
         <param field="Mode2" label="LED Brightness" width="75px" required="true" default="60"/>
@@ -55,10 +55,10 @@
         </param>
     </params>
 </plugin>
-""" 
+"""
 
 # Set the plugin version which is displayon the LCD
-PLUGINVERSION = "v1.1.0"
+PLUGINVERSION = "v1.1.1"
 
 ## Imports
 import Domoticz
@@ -73,7 +73,7 @@ from os import path
 import sys
 sys.path
 sys.path.append('/usr/local/lib/python3.5/dist-packages')
-                
+
 import tinkerforge
 from tinkerforge.ip_connection import IPConnection
 from tinkerforge.brick_master import BrickMaster
@@ -117,13 +117,15 @@ UIDINDEXRGBLED = 3
 UIDINDEXAMBIENTLIGHT = 4
 
 class BasePlugin:
-    
+
     def __init__(self):
         # The Domoticz heartbeat is set to every 60 seconds. Do not use a higher value as Domoticz message "Error: hardware (N) thread seems to have ended unexpectedly"
         # The Soil Moisture Monitor is read every Parameter.Mode5 seconds. This is determined by using a hearbeatcounter which is triggered by:
         # (self.HeartbeatCounter * self.HeartbeatInterval) % int(Parameter.Mode5) = 0
         self.HeartbeatInterval = 60
         self.HeartbeatCounter = 0
+        # Flag to check if an error occurred
+        self.isError = 0
         # Flag to check if connected to the master brick
         self.ipConnected = 0
         # List of UIDs - Master Brick, Bricklet(s)
@@ -134,7 +136,7 @@ class BasePlugin:
         Domoticz.Log("Air Quality Monitor starting")
         Domoticz.Debug("onStart called")
         Domoticz.Debug("Debug Mode:" + Parameters["Mode6"])
-        
+
         if Parameters["Mode6"] == "Debug":
             self.debug = True
             Domoticz.Debugging(1)
@@ -151,29 +153,33 @@ class BasePlugin:
 
             Domoticz.Device(Name="Index Accuracy", Unit=UNITALERTIAQINDEXACCURACY, TypeName="Alert", Used=1).Create()
             Domoticz.Debug("Device created: "+Devices[UNITALERTIAQINDEXACCURACY].Name)
-            
+
             Domoticz.Device(Name="Air Quality", Unit=UNITALERTAIRQUALITY, TypeName="Alert", Used=1).Create()
             Domoticz.Debug("Device created: "+Devices[UNITALERTAIRQUALITY].Name)
-            
+
             Domoticz.Device(Name="Temperature", Unit=UNITTEMPERATURE, TypeName="Temperature", Used=1).Create()
             Domoticz.Debug("Device created: "+Devices[UNITTEMPERATURE].Name)
-            
+
             Domoticz.Device(Name="Humidity", Unit=UNITHUMIDITY, TypeName="Humidity", Used=1).Create()
             Domoticz.Debug("Device created: "+Devices[UNITHUMIDITY].Name)
-            
+
             Domoticz.Device(Name="Air Pressure", Unit=UNITBAROMETER, TypeName="Barometer", Used=1).Create()
             Domoticz.Debug("Device created: "+Devices[UNITBAROMETER].Name)
-            
+
             Domoticz.Device(Name="Ambient Light", Unit=UNITILLUMINATION, TypeName="Illumination", Used=1).Create()
             Domoticz.Debug("Device created: "+Devices[UNITILLUMINATION].Name)
-            
+
             Domoticz.Device(Name="LCD Backlight", Unit=UNITSWITCHBACKLIGHT, TypeName="Switch", Used=1).Create()
             Domoticz.Debug("Device created: "+Devices[UNITSWITCHBACKLIGHT].Name)
-            
+
             # Control devices
             Domoticz.Device(Name="Status", Unit=UNITTEXTSTATUS, TypeName="Text", Used=1).Create()
             Domoticz.Debug("Device created: "+Devices[UNITTEXTSTATUS].Name)
             Domoticz.Debug("Creating new devices: OK")
+
+        # Heartbeat
+        Domoticz.Debug("Heartbeat set: "+Parameters["Mode5"])
+        Domoticz.Heartbeat(self.HeartbeatInterval)
 
         # Create the UID list using the UID as defined in the parameter Mode1
         ## The string contains multiple UIDs separated by comma (,). This enables to define more devices.
@@ -186,32 +192,15 @@ class BasePlugin:
             Devices[UNITTEXTSTATUS].Update( nValue=0, sValue="[ERROR] UID parameter not correct! Should contain 5 UIDs." )
             Domoticz.Log(Devices[UNITTEXTSTATUS].sValue)
 
-        # Master - Turn status led off
-        SetMasterStatusLed(self, 0)
-
-        # LCD - Turn backlight ON (Ensure to update the domoticz switch device),  set initial text.
-        SetLCDBacklight(self, 'On')
-        Devices[UNITSWITCHBACKLIGHT].Update( nValue=1, sValue=str(0))
-        SetLCDText(self, "Indoor Air Quality", "Station " + PLUGINVERSION, "", "2019 by rwbl")
-
-        # RGB LED - Turn status led off
-        SetRGBLEDStatusLed(self, 0)
-
-        # Air Quality - Turn status led off - NOT USED as replaced by ConfigAirQuality
-        # SetAirQualityStatusLed(self, 0)
-        # Air Quality - Config
-        ConfigAirQuality(self)
-    
-        # Heartbeat
-        Domoticz.Debug("Heartbeat set: "+Parameters["Mode5"])
-        Domoticz.Heartbeat(self.HeartbeatInterval)
+        # Init various brick & bricklets
+        InitBricks(self)
 
     def onStop(self):
         Domoticz.Debug("Plugin is stopping.")
 
     def onConnect(self, Connection, Status, Description):
         Domoticz.Debug("onConnect called")
-        
+
     def onMessage(self, Connection, Data):
         Domoticz.Debug("onMessage called")
 
@@ -234,7 +223,7 @@ class BasePlugin:
     def onHeartbeat(self):
         self.HeartbeatCounter = self.HeartbeatCounter + 1
         Domoticz.Debug("onHeartbeat called. Counter=" + str(self.HeartbeatCounter * self.HeartbeatInterval) + " (Heartbeat=" + Parameters["Mode5"] + ")")
-        
+
         # Reset ipconnected flag
         self.ipConnected = 0
 
@@ -242,16 +231,16 @@ class BasePlugin:
         if (self.HeartbeatCounter * self.HeartbeatInterval) % int(Parameters["Mode5"]) == 0:
 
             try:
-                
+
                 # Create IP connection
                 ipcon = IPConnection()
                 Domoticz.Debug("IP Connected created")
-                
+
                 # Create the device objects
                 master = BrickMaster(self.UIDList[UIDINDEXMASTER], ipcon)
                 aq = BrickletAirQuality(self.UIDList[UIDINDEXAIRQUALITY], ipcon)
                 lcd = BrickletLCD20x4(self.UIDList[UIDINDEXLCD], ipcon)
-                rl = BrickletRGBLEDV2(self.UIDList[UIDINDEXRGBLED], ipcon) 
+                rl = BrickletRGBLEDV2(self.UIDList[UIDINDEXRGBLED], ipcon)
                 al = BrickletAmbientLightV2(self.UIDList[UIDINDEXAMBIENTLIGHT], ipcon)
                 Domoticz.Debug("Devices created - OK")
 
@@ -261,6 +250,7 @@ class BasePlugin:
                     self.ipConnected = 1
                     Domoticz.Debug("IP Connection - OK")
                 except:
+                    self.isError = 1
                     Domoticz.Debug("[ERROR] IP Connection failed")
 
                 # Don't use device before ipcon is connected
@@ -272,12 +262,18 @@ class BasePlugin:
                     #Domoticz.Debug(Devices[ALERTDEVICE].Name + "-nValue=" + str(Devices[ALERTDEVICE].nValue) + ",sValue=" + Devices[ALERTDEVICE].sValue  )
                     Devices[UNITTEXTSTATUS].Update( nValue=0, sValue="[ERROR] Can not connect to the Master Brick. Check device or settings." )
                     Domoticz.Log(Devices[UNITTEXTSTATUS].sValue)
+                    self.isError = 1
                     return
+
+                # If there was an error in the connection,init the bricks again
+                if self.isError == 1 and self.ipConnected == 1:
+                    InitBricks(self)
+                    self.isError = 0
 
                 # AIR QUALITY
                 # Get current all values
                 iaq_index, iaq_index_accuracy, temperature, humidity, air_pressure = aq.get_all_values()
-                
+
                 ## TESTdata with using the air quality bricklet
                 '''
                 iaq_index = 69 # 0 -200
@@ -291,11 +287,11 @@ class BasePlugin:
 
                 # IAQ (Indoor Air Quality) Index
                 ## nValue=0
-				## sValue=string value
+                ## sValue=string value
                 Devices[UNITAIRQUALITYIAQINDEX].Update( nValue=0,sValue=str(iaq_index) )
                 # Devices[UNITAIRQUALITYIAQINDEX].Update( nValue=iaq_index, sValue="0")
                 Domoticz.Debug(Devices[UNITAIRQUALITYIAQINDEX].Name + "-IAQ Index:" + str(iaq_index) )
- 
+
                 # IAQ Index Accuracy
                 ## nvalue=LEVEL - (0=gray, 1=green, 2=yellow, 3=orange, 4=red)
                 ## svalue=TEXT
@@ -318,10 +314,10 @@ class BasePlugin:
                 airqualitylevel = 0
                 if iaq_index >= 0 and iaq_index <= AIRQUALITYLEVELLIMIT[1]:
                     airqualitylevel = 1
-                    
+
                 if iaq_index > AIRQUALITYLEVELLIMIT[1] and iaq_index <= AIRQUALITYLEVELLIMIT[2]:
                     airqualitylevel = 2
-                    
+
                 if iaq_index > AIRQUALITYLEVELLIMIT[2] and iaq_index <= AIRQUALITYLEVELLIMIT[3]:
                     airqualitylevel = 3
 
@@ -330,7 +326,7 @@ class BasePlugin:
 
                 if iaq_index > AIRQUALITYLEVELLIMIT[4] and iaq_index <= AIRQUALITYLEVELLIMIT[5]:
                     airqualitylevel = 5
-                
+
                 if iaq_index > AIRQUALITYLEVELLIMIT[5]:
                     airqualitylevel = 6
 
@@ -386,7 +382,7 @@ class BasePlugin:
 
                 ## LCD Display
                 ## Writes text to a specific line (0 to 3) with a specific position (0 to 19). The text can have a maximum of 20 characters.
-                
+
                 ## Turn backlight on NOTE: done in onStart
                 ## lcd.backlight_on()
                 ## Domoticz.Debug("LCD Backlight ON")
@@ -410,7 +406,7 @@ class BasePlugin:
 
                 ## illuminance
                 lcdilluminance = str(illuminance)
-                
+
                 ## write to the lcd: line (int,0-3),pos(int,0-19),text
                 lcd.write_line(0, 0, "Q: " + lcdaqi + " ppm " + airqualitytext)
                 lcd.write_line(1, 0, "T: " + lcdtemperature + " C")
@@ -439,17 +435,18 @@ class BasePlugin:
                 ipcon.disconnect()
 
                 # Log Message
-                Domoticz.Debug("Update - OK.")
-                
+                Domoticz.Debug("Update OK.")
+
             except:
                 # Error
+                self.isError == 1
                 # Important to close the connection - if not, the plugin can not be disabled
                 if self.ipConnected == 1:
                     ipcon.disconnect()
-            
+
                 Devices[UNITTEXTSTATUS].Update( nValue=0, sValue="[ERROR] Check settings, correct and restart Domoticz." )
                 Domoticz.Log(Devices[UNITTEXTSTATUS].sValue)
-                
+
 global _plugin
 _plugin = BasePlugin()
 
@@ -485,7 +482,10 @@ def onHeartbeat():
     global _plugin
     _plugin.onHeartbeat()
 
-# Generic helper functions
+#
+## Generic helper functions
+#
+
 def DumpConfigToLog():
     for x in Parameters:
         if Parameters[x] != "":
@@ -499,6 +499,27 @@ def DumpConfigToLog():
         Domoticz.Debug("Device sValue:   '" + Devices[x].sValue + "'")
         Domoticz.Debug("Device LastLevel: " + str(Devices[x].LastLevel))
     return
+
+# Check  the IP connection
+# The flag isError is set:Error=1,OK=1
+# Return 1=OK,0=Error
+def CheckIPConnection(self):
+    Domoticz.Debug("CheckIPConnection - " + Parameters["Address"]  + ":" + str(int(Parameters["Port"])))
+    self.isError = 0
+    try:
+        # Create IP connection > connect to the brickd > disconnect
+        ipcon = IPConnection()
+        ipcon.connect(Parameters["Address"], int(Parameters["Port"]))
+        ipcon.disconnect()
+        Domoticz.Debug("IPConnection: OK")
+        return 1
+
+    except:
+        # Error
+        Devices[UNITTEXTSTATUS].Update( nValue=0, sValue="[ERROR] Can not connect to the Master Brick.")
+        Domoticz.Log(Devices[UNITTEXTSTATUS].sValue)
+        self.isError = 1
+        return 0
 
 # Get humiditystatus - 0=Normal,1=Comfortable,2=Dry,3=Wet
 # Return 0=Normal,1=Comfortable,2=Dry,3=Wet
@@ -517,7 +538,7 @@ def SetMasterStatusLed(self, state):
     Domoticz.Debug("SetMasterStatusLed - UID:" + self.UIDList[UIDINDEXMASTER])
     try:
         # Create IP connection
-        ipcon = IPConnection() 
+        ipcon = IPConnection()
         # Create device object
         master = BrickMaster(self.UIDList[UIDINDEXMASTER], ipcon)
         # Connect to brickd
@@ -532,7 +553,7 @@ def SetMasterStatusLed(self, state):
             Domoticz.Log("Master Status LED enabled.")
 
         ipcon.disconnect()
-        
+
         return 1
 
     except:
@@ -546,9 +567,9 @@ def SetRGBLEDStatusLed(self, state):
     Domoticz.Debug("SetRGBLEDStatusLed - UID:" + self.UIDList[UIDINDEXRGBLED])
     try:
         # Create IP connection
-        ipcon = IPConnection() 
+        ipcon = IPConnection()
         # Create device object
-        rl = BrickletRGBLEDV2(self.UIDList[UIDINDEXRGBLED], ipcon) 
+        rl = BrickletRGBLEDV2(self.UIDList[UIDINDEXRGBLED], ipcon)
         # Connect to brickd
         ipcon.connect(Parameters["Address"], int(Parameters["Port"]))
         # Don't use device before ipcon is connected
@@ -561,7 +582,7 @@ def SetRGBLEDStatusLed(self, state):
             Domoticz.Log("RGB LED Status LED enabled.")
 
         ipcon.disconnect()
-        
+
         return 1
 
     except:
@@ -582,7 +603,7 @@ def SetAirQualityStatusLed(self, state):
     Domoticz.Debug("SetAirQualityStatusLed - UID:" + self.UIDList[UIDINDEXAIRQUALITY])
     try:
         # Create IP connection
-        ipcon = IPConnection() 
+        ipcon = IPConnection()
         # Create device object
         aq = BrickletAirQuality(self.UIDList[UIDINDEXAIRQUALITY], ipcon)
         # Connect to brickd
@@ -597,7 +618,7 @@ def SetAirQualityStatusLed(self, state):
             Domoticz.Log("Air Quality Status LED enabled.")
 
         ipcon.disconnect()
-        
+
         return 1
 
     except:
@@ -612,7 +633,7 @@ def ConfigAirQuality(self):
     Domoticz.Debug("ConfigAirQuality - UID:" + self.UIDList[UIDINDEXAIRQUALITY])
     try:
         # Create IP connection
-        ipcon = IPConnection() 
+        ipcon = IPConnection()
         # Create device object
         aq = BrickletAirQuality(self.UIDList[UIDINDEXAIRQUALITY], ipcon)
         # Connect to brickd
@@ -635,7 +656,7 @@ def ConfigAirQuality(self):
         aq.set_background_calibration_duration(0)
 
         ipcon.disconnect()
-        
+
         return 1
 
     except:
@@ -649,7 +670,7 @@ def SetLCDBacklight(self, state):
     Domoticz.Debug("SetLCDBacklight - UID:" + self.UIDList[UIDINDEXLCD])
     try:
         # Create IP connection
-        ipcon = IPConnection() 
+        ipcon = IPConnection()
         # Create device object
         lcd = BrickletLCD20x4(self.UIDList[UIDINDEXLCD], ipcon)
         # Connect to brickd
@@ -664,21 +685,21 @@ def SetLCDBacklight(self, state):
             Domoticz.Log("LCD Backlight ON.")
 
         ipcon.disconnect()
-        
+
         return 1
 
     except:
         # Error
         Domoticz.Log("[ERROR] Can not set Master Status LED.")
         return 0
-        
+
 # Set the LCD text by writing up to 4 lines starting at pos 0
 # line1,line2,line3,line4
 def SetLCDText(self, line1, line2, line3, line4):
     Domoticz.Debug("SetLCDText - UID:" + self.UIDList[UIDINDEXLCD])
     try:
         # Create IP connection
-        ipcon = IPConnection() 
+        ipcon = IPConnection()
         # Create device object
         lcd = BrickletLCD20x4(self.UIDList[UIDINDEXLCD], ipcon)
         # Connect to brickd
@@ -692,11 +713,72 @@ def SetLCDText(self, line1, line2, line3, line4):
         lcd.write_line(3, 0, line4)
 
         ipcon.disconnect()
-        
+
         return 1
 
     except:
         # Error
         Domoticz.Log("[ERROR] Can not set Master Status LED.")
         return 0
-        
+
+# Init various bricks
+def InitBricks(self):
+    Domoticz.Debug("InitBricks")
+    try:
+        # Create IP connection
+        ipcon = IPConnection()
+
+        # Create device objects
+        master = BrickMaster(self.UIDList[UIDINDEXMASTER], ipcon)
+        rl = BrickletRGBLEDV2(self.UIDList[UIDINDEXRGBLED], ipcon)
+        aq = BrickletAirQuality(self.UIDList[UIDINDEXAIRQUALITY], ipcon)
+        lcd = BrickletLCD20x4(self.UIDList[UIDINDEXLCD], ipcon)
+
+        # Connect to brickd
+        ipcon.connect(Parameters["Address"], int(Parameters["Port"]))
+
+        # Settings
+
+        ## Master - Turn status led off
+        master.disable_status_led()
+        Domoticz.Log("Master Status LED disabled.")
+
+        ## RGB LED - Turn status led off
+        rl.set_status_led_config(0)
+        Domoticz.Log("RGB LED Status LED disabled.")
+
+        ## Air Quality - Config
+        ## Turn off status led
+        aq.set_status_led_config(0)
+        Domoticz.Log("Air Quality Status LED disabled.")
+        # Set temperature offset with resolution 1/100°C. Offset 10 = decrease measured temperature by 0.1°C, 100 = 1°C.
+        # offset - int
+        # Test with 2°C = 200
+        aq.set_temperature_offset(200)
+        # The Air Quality Bricklet uses an automatic background calibration mechanism to calculate the IAQ Index.
+        # This calibration mechanism considers a history of measured data. Duration history = 4 days (0) or 28 days (1).
+        # duration - int 0 | 1
+        # Test with 0 = 4 days
+        aq.set_background_calibration_duration(0)
+
+        ## LCD - Turn backlight ON (ensure to update the domoticz switch device), set initial welcome text.
+        lcd.backlight_on()
+        Devices[UNITSWITCHBACKLIGHT].Update( nValue=1, sValue=str(0))
+        SetLCDText(self, "Indoor Air Quality", "Station " + PLUGINVERSION, "", "2019 by rwbl")
+
+        # Disconnect and return OK
+        ipcon.disconnect()
+
+        Domoticz.Debug("InitBricks OK")
+
+        self.isError = 0
+
+        return 1
+
+    except:
+        # Error
+        self.isError = 1
+        Domoticz.Log("[ERROR] Can not init the bricks.")
+        return 0
+
+    return
