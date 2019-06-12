@@ -1,5 +1,5 @@
 # Indoor Air Quality Monitor 
-v1.1.0 (Build 20190609)
+v1.1.1 (Build 20190612)
 
 # Objectives
 * To measure the Indoor Air Quality Index, Condition and Accuracy, Air Pressure, Humidity, Temperature, Illuminance.
