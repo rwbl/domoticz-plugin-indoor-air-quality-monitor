@@ -22,10 +22,10 @@ _Status_
 Not started.
 
 #### NEW: IP Connection onStart & onStop
-Instead of ip connect & disconnet for every heartbeat, use the function onStart to connect and onStop to disconnect.
-This functionality is required for the push buttons callback.
+Instead of ip connect & disconnect for every heartbeat, use the functions onStart to connect and onStop to disconnect.
+This functionality is required for the LCD push buttons callback.
 
-#### NEW: Replace RGB LED by IO-4 with three LEDs R-G-B.
+#### NEW: Replace Bricklet RGB LED by Bricklet IO-4 with three LEDs R-G-B.
 Just an idea. Will probably drop.
 _Status_
 Not started.
