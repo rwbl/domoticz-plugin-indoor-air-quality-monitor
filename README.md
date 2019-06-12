@@ -7,7 +7,6 @@ v1.1.1 (Build 20190612)
 * To enable additional functionality by using scripts (preferred dzVents Lua scripts), i.e. switch LCD backlight, switch room light depending Lux threshold.
 
 _Abbreviations_: IAQ=Indoor Air Quality, GUI=Domoticz Web UI.
-_Note_: The screenshots mightnot reflect the latest version.
 
 ## Solution
 An **Indoor Air Quality Station** is build out of [Tinkerforge](https://www.tinkerforge.com/en) Building Blocks:
@@ -34,7 +33,7 @@ The **Domoticz Indoor Air Quality Devices** created are - Name (Type,SubType):
 _Note:_
 Enhanced functionality, like switch LCD backlight, switch lights (depending Lux) are build using dzVents Lua scripts.
 
-![domoticz-tinkerforge-airqualitymonitor-d](https://user-images.githubusercontent.com/47274144/59162134-440b0a80-8aec-11e9-967d-b7aa0f3ec604.png)
+![domoticz-plugin-iaqm-d2](https://user-images.githubusercontent.com/47274144/59341287-e6530a00-8d07-11e9-87e0-0689e8ad68f8.png)
 
 ![domoticz-tinkerforge-airqualitymonitor-f](https://user-images.githubusercontent.com/47274144/59162130-335a9480-8aec-11e9-8ae6-77c00884e2a1.png)
 
