@@ -9,7 +9,7 @@ v1.1.1 (Build 20190612)
 _Abbreviations_: IAQ=Indoor Air Quality, GUI=Domoticz Web UI.
 
 ## Solution
-An **Indoor Air Quality Station** is build out of [Tinkerforge](https://www.tinkerforge.com/en) Building Blocks:
+An **Indoor Air Quality Station** is built out of [Tinkerforge](https://www.tinkerforge.com/en) Building Blocks:
 Master Brick with WiFi Extension, Bricklets Air Quality, LCD 20x4, RGB LED, Ambient Light.
 
 ![domoticz-tinkerforge-airqualitymonitor-p2](https://user-images.githubusercontent.com/47274144/59162141-56854400-8aec-11e9-843a-335f28a6f059.png)
@@ -17,7 +17,7 @@ Master Brick with WiFi Extension, Bricklets Air Quality, LCD 20x4, RGB LED, Ambi
 The **Air Quality Bricklet** measures the IAQ Index (ppm), IAQ Condition, IAQ Accuracy, Air Pressure (mbar), Humidity (%), Temperature (C).
 * **Referencing** Tinkerforge [documentation](https://www.tinkerforge.com/en/doc/Hardware/Bricklets/Air_Quality.html#air-quality-bricklet): _The IAQ index is a measurement for the quality of air. To calculate the IAQ index the Bricklet detects ethane, isoprene (2-methylbuta-1,3-diene), ethanol, acetone and carbon monoxide (often called VOC, volatile organic components) by adsorption. These gas measurements are combined with the measurements of air pressure, humidity and temperature to calculate the final IAQ index._
 * **IAQ Condition Levels (6)** range=condition (color):
-0-50=Good (green), 51-100=Moderate (yellow), 101-150=Unhealthy sensitive groups (orange), 151-200=Unhealthy (red), 201-300=Very Unhealthy (purple), 301-500=Hazardous (maroon).<br/>
+0-50=Good (green), 51-100=Moderate (yellow), 101-150=Unhealthy sensitive groups (orange), 151-200=Unhealthy (red), 201-300=Very Unhealthy (purple), 301-500=Hazardous (maroon).
 * **IAQ Index Accuracy Levels (4)**: Unreliable, Low, Medium, High.
 
 The **Ambient Light Bricklet** measures the Illuminance (lx).
