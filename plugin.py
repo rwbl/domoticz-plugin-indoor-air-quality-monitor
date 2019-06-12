@@ -42,7 +42,7 @@
         </ul>
     </description>
     <params>
-        <param field="Address" label="Host" width="200px" required="true" default="192.168.1.114"/>
+        <param field="Address" label="Host" width="200px" required="true" default="MASTER-IP-ADDRESS"/>
         <param field="Port" label="Port" width="75px" required="true" default="4223"/>
         <param field="Mode1" label="UID (5)" width="200px" required="true" default="6yLduG,Jvj,BHN,Jng,yyc"/>
         <param field="Mode2" label="LED Brightness" width="75px" required="true" default="60"/>
