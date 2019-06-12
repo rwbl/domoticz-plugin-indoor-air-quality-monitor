@@ -16,9 +16,9 @@ Master Brick with WiFi Extension, Bricklets Air Quality, LCD 20x4, RGB LED, Ambi
 
 The **Air Quality Bricklet** measures the IAQ Index (ppm), IAQ Condition, IAQ Accuracy, Air Pressure (mbar), Humidity (%), Temperature (C).
 * **Referencing** Tinkerforge [documentation](https://www.tinkerforge.com/en/doc/Hardware/Bricklets/Air_Quality.html#air-quality-bricklet): _The IAQ index is a measurement for the quality of air. To calculate the IAQ index the Bricklet detects ethane, isoprene (2-methylbuta-1,3-diene), ethanol, acetone and carbon monoxide (often called VOC, volatile organic components) by adsorption. These gas measurements are combined with the measurements of air pressure, humidity and temperature to calculate the final IAQ index._
-* There are 6 IAQ Condition Levels with range=condition (color):
+* **IAQ Condition Levels (6)** range=condition (color):
 0-50=Good (green), 51-100=Moderate (yellow), 101-150=Unhealthy sensitive groups (orange), 151-200=Unhealthy (red), 201-300=Very Unhealthy (purple), 301-500=Hazardous (maroon).<br/>
-* The IAQ Index Accuracy has 4 levels Unreliable, Low, Medium, High.
+* **IAQ Index Accuracy Levels (4)**: Unreliable, Low, Medium, High.
 
 The **Ambient Light Bricklet** measures the Illuminance (lx).
 
